@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>員工生活平衡計畫 — 企業身心健康整合服務</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:    #0a2218;
+      --primary: #1a5c3a;
+      --mid:     #2d7a52;
+      --accent:  #52c989;
+      --gold:    #e8c56a;
+      --bg:      #faf9f6;
+      --bg2:     #f0f7f3;
+      --text:    #1c1c1e;
+      --muted:   #5c6e63;
+      --border:  #dde8e2;
+      --white:   #ffffff;
+      --r: 18px;
+      --shadow-sm: 0 2px 12px rgba(10,34,24,.06);
+      --shadow-md: 0 8px 32px rgba(10,34,24,.10);
+      --shadow-lg: 0 20px 60px rgba(10,34,24,.15);
+    }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: "Noto Sans TC", system-ui, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.75; overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 66px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      background: rgba(10,34,24,.88);
+      backdrop-filter: blur(20px) saturate(1.6);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: .02em;
+      text-decoration: none;
+    }
+    .nav-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: rgba(255,255,255,.6);
+      font-size: .87rem; font-weight: 500; transition: color .2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: var(--accent); color: var(--dark);
+      font-size: .85rem; font-weight: 700; padding: 9px 22px;
+      border-radius: 999px; text-decoration: none;
+      transition: background .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { background: #6edda0; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--dark);
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 130px 6% 90px;
+    }
+    .hero-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(120px); pointer-events: none;
+    }
+    .blob-1 { width: 800px; height: 800px; background: #1a5c3a; opacity: .2; top: -250px; right: -150px; }
+    .blob-2 { width: 500px; height: 500px; background: #52c989; opacity: .12; bottom: -100px; left: 10%; }
+    .blob-3 { width: 300px; height: 300px; background: #e8c56a; opacity: .08; top: 40%; left: -80px; }
+    .hero-grid-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 360px; gap: 80px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(82,201,137,.14); border: 1px solid rgba(82,201,137,.28);
+      border-radius: 999px; padding: 6px 18px 6px 12px;
+      font-size: .76rem; font-weight: 700; color: var(--accent);
+      letter-spacing: .08em; margin-bottom: 30px;
+    }
+    .badge-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5.5vw, 4rem); font-weight: 900;
+      line-height: 1.1; letter-spacing: -.025em;
+      color: #fff; margin-bottom: 26px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-desc {
+      color: rgba(255,255,255,.6); font-size: 1.05rem;
+      max-width: 480px; margin-bottom: 48px; line-height: 1.9;
+    }
+    .hero-btns { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .btn-accent {
+      background: var(--accent); color: var(--dark);
+      font-weight: 800; font-size: .97rem; padding: 16px 38px;
+      border-radius: 999px; text-decoration: none;
+      box-shadow: 0 4px 28px rgba(82,201,137,.38);
+      transition: all .25s;
+    }
+    .btn-accent:hover { background: #6edda0; transform: translateY(-2px); box-shadow: 0 8px 36px rgba(82,201,137,.45); }
+    .btn-ghost-light {
+      color: rgba(255,255,255,.7); font-weight: 600; font-size: .93rem;
+      text-decoration: none; display: flex; align-items: center; gap: 10px;
+      transition: color .2s;
+    }
+    .btn-ghost-light:hover { color: #fff; }
+    .btn-ghost-light .arrow-ring {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.22);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; transition: border-color .2s;
+    }
+    .btn-ghost-light:hover .arrow-ring { border-color: rgba(255,255,255,.55); }
+
+    /* Hero stat card */
+    .hero-stat-card {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09);
+      border-radius: 24px; padding: 36px 30px;
+      backdrop-filter: blur(10px);
+    }
+    .h-stat { padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .h-stat:first-child { padding-top: 0; }
+    .h-stat:last-child { border-bottom: none; padding-bottom: 0; }
+    .h-stat-num { font-size: 3rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -.04em; }
+    .h-stat-num sup { font-size: 1.4rem; color: var(--accent); }
+    .h-stat-lbl { font-size: .8rem; color: rgba(255,255,255,.45); margin-top: 6px; letter-spacing: .02em; }
+
+    /* ── SECTION COMMON ── */
+    .sec { padding: 96px 6%; }
+    .sec-alt { background: var(--bg2); }
+    .sec-dark { background: var(--dark); }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+    .eyebrow-dark { color: rgba(82,201,137,.8); }
+    .eyebrow-dark::before { background: rgba(82,201,137,.8); }
+
+    .sec-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 900; line-height: 1.15; letter-spacing: -.02em; margin-bottom: 16px; }
+    .sec-sub { color: var(--muted); font-size: .97rem; line-height: 1.85; max-width: 580px; }
+    .sec-title-white { color: #fff; }
+    .sec-sub-white { color: rgba(255,255,255,.55); }
+
+    /* ── PROBLEMS / SOLUTIONS ── */
+    .prob-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+    }
+    .prob-list { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
+    .prob-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: white; border-radius: 14px; padding: 18px 20px;
+      box-shadow: var(--shadow-sm); border-left: 3px solid var(--accent);
+    }
+    .prob-emoji { font-size: 1.35rem; flex-shrink: 0; margin-top: 2px; }
+    .prob-title { font-size: .93rem; font-weight: 700; margin-bottom: 4px; }
+    .prob-desc  { font-size: .82rem; color: var(--muted); }
+
+    .sol-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
+    .sol-card {
+      background: white; border-radius: 16px; padding: 22px 20px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 16px;
+      transition: transform .22s, box-shadow .22s;
+    }
+    .sol-card:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+    .sol-icon {
+      width: 48px; height: 48px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .sol-card h4 { font-size: .97rem; font-weight: 700; margin-bottom: 5px; }
+    .sol-card p  { font-size: .82rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── VENDORS ── */
+    .vendors-header { text-align: center; margin-bottom: 60px; }
+    .vendors-header .sec-sub { margin: 0 auto; }
+
+    .vendor-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .vcard {
+      background: white; border-radius: 20px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s;
+    }
+    .vcard:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .vcard-stripe { height: 5px; }
+    .vcard-body { padding: 28px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .vcard-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .vcard-icon {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.65rem; flex-shrink: 0;
+    }
+    .vcard-name { font-size: 1.07rem; font-weight: 800; }
+    .vcard-role { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+    .vcard-tagline { font-size: .8rem; font-weight: 600; margin-top: 6px; }
+    .vcard-bio {
+      font-size: .86rem; color: var(--muted); line-height: 1.8;
+      padding-bottom: 18px; border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .vcard-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+    }
+    .vtags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .vtag {
+      padding: 5px 13px; border-radius: 999px;
+      font-size: .75rem; font-weight: 600;
+    }
+
+    /* Vendor color themes */
+    .v-sand  .vcard-stripe { background: linear-gradient(90deg,#f5a05a,#e8965a); }
+    .v-sand  .vcard-icon   { background: #fdf0e0; }
+    .v-sand  .vcard-tagline{ color: #c2702a; }
+    .v-sand  .vtag         { background: #fdf0e0; color: #b86028; }
+
+    .v-purple .vcard-stripe { background: linear-gradient(90deg,#a876e0,#7c52c8); }
+    .v-purple .vcard-icon   { background: #f3eefc; }
+    .v-purple .vcard-tagline{ color: #6b42b5; }
+    .v-purple .vtag         { background: #f3eefc; color: #6338ac; }
+
+    .v-teal  .vcard-stripe { background: linear-gradient(90deg,#3db8c8,#2a7a8a); }
+    .v-teal  .vcard-icon   { background: #e6f4f6; }
+    .v-teal  .vcard-tagline{ color: #1f6875; }
+    .v-teal  .vtag         { background: #e6f4f6; color: #1d6070; }
+
+    .v-green .vcard-stripe { background: linear-gradient(90deg,#52c989,#3d7a5f); }
+    .v-green .vcard-icon   { background: #eef7f2; }
+    .v-green .vcard-tagline{ color: #2d6b4a; }
+    .v-green .vtag         { background: #eef7f2; color: #2a6045; }
+
+    .v-forest .vcard-stripe { background: linear-gradient(90deg,#6ec88e,#2d7a52); }
+    .v-forest .vcard-icon   { background: #e8f5ee; }
+    .v-forest .vcard-tagline{ color: #236040; }
+    .v-forest .vtag         { background: #e8f5ee; color: #205a3c; }
+
+    .v-blue  .vcard-stripe { background: linear-gradient(90deg,#5a9fd4,#3a6a8a); }
+    .v-blue  .vcard-icon   { background: #e6f0f8; }
+    .v-blue  .vcard-tagline{ color: #2e5a78; }
+    .v-blue  .vtag         { background: #e6f0f8; color: #2a5470; }
+
+    /* ── PACKAGES ── */
+    .pkg-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      align-items: start;
+    }
+    .pkg-card {
+      border-radius: 20px; padding: 36px 28px;
+      display: flex; flex-direction: column;
+      transition: transform .28s cubic-bezier(.22,1,.36,1);
+    }
+    .pkg-card:hover { transform: translateY(-5px); }
+    .pkg-a, .pkg-c {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .pkg-b {
+      background: var(--accent);
+      border: 1px solid rgba(255,255,255,.2);
+      transform: translateY(-12px);
+      box-shadow: 0 24px 64px rgba(82,201,137,.28);
+    }
+    .pkg-b:hover { transform: translateY(-17px); }
+
+    .pkg-eyebrow {
+      font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; padding: 5px 13px; border-radius: 999px;
+      display: inline-block; margin-bottom: 24px; width: fit-content;
+    }
+    .pkg-a .pkg-eyebrow, .pkg-c .pkg-eyebrow { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
+    .pkg-b .pkg-eyebrow { background: rgba(10,34,24,.18); color: var(--dark); }
+
+    .pkg-title { font-size: 1.35rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -.015em; }
+    .pkg-a .pkg-title, .pkg-c .pkg-title { color: #fff; }
+    .pkg-b .pkg-title { color: var(--dark); }
+
+    .pkg-desc { font-size: .87rem; margin-bottom: 28px; line-height: 1.8; }
+    .pkg-a .pkg-desc, .pkg-c .pkg-desc { color: rgba(255,255,255,.5); }
+    .pkg-b .pkg-desc { color: rgba(10,34,24,.6); }
+
+    .pkg-divider { height: 1px; margin-bottom: 24px; }
+    .pkg-a .pkg-divider, .pkg-c .pkg-divider { background: rgba(255,255,255,.08); }
+    .pkg-b .pkg-divider { background: rgba(10,34,24,.12); }
+
+    .pkg-items { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 13px; }
+    .pkg-item { display: flex; align-items: flex-start; gap: 11px; font-size: .88rem; line-height: 1.6; }
+    .pkg-check {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6rem; font-weight: 900;
+    }
+    .pkg-a .pkg-check, .pkg-c .pkg-check { background: rgba(82,201,137,.18); color: var(--accent); }
+    .pkg-b .pkg-check { background: rgba(10,34,24,.14); color: var(--dark); }
+    .pkg-a .pkg-item, .pkg-c .pkg-item { color: rgba(255,255,255,.78); }
+    .pkg-b .pkg-item { color: var(--dark); }
+
+    .pkg-feat-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .pkg-a .pkg-feat-label, .pkg-c .pkg-feat-label { color: rgba(255,255,255,.35); }
+    .pkg-b .pkg-feat-label { color: rgba(10,34,24,.45); }
+
+    /* ── FLOW ── */
+    .flow-wrap { position: relative; }
+    .flow-line {
+      position: absolute; top: 40px; left: calc(100%/12); right: calc(100%/12);
+      height: 2px; background: linear-gradient(90deg, var(--accent), var(--mid));
+      z-index: 0; border-radius: 2px;
+    }
+    .flow-steps {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 0; position: relative; z-index: 1;
+    }
+    .f-step { text-align: center; padding: 0 10px; }
+    .f-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: white; border: 2px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: var(--shadow-sm);
+      transition: all .3s cubic-bezier(.22,1,.36,1);
+      position: relative;
+    }
+    .f-step:hover .f-circle {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 6px rgba(82,201,137,.12), var(--shadow-md);
+      transform: scale(1.1);
+    }
+    .f-num {
+      position: absolute; top: -7px; right: -7px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: var(--dark);
+      font-size: .62rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .f-emoji { font-size: 1.6rem; }
+    .f-step h4 { font-size: .93rem; font-weight: 700; margin-bottom: 7px; color: var(--text); }
+    .f-step p  { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-sec {
+      background: linear-gradient(135deg, #071810 0%, #1a5c3a 55%, #2d7a52 100%);
+      padding: 110px 6%; text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-sec::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 65% 50%, rgba(82,201,137,.14), transparent 65%);
+    }
+    .cta-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+    .cta-sec h2 {
+      font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 900;
+      color: #fff; margin-bottom: 22px; letter-spacing: -.025em; line-height: 1.1;
+    }
+    .cta-sec h2 em { font-style: normal; color: var(--accent); }
+    .cta-sec p { color: rgba(255,255,255,.6); font-size: 1rem; margin-bottom: 48px; line-height: 1.85; }
+    .cta-btns { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .btn-cta-p {
+      background: var(--accent); color: var(--dark);
+      font-weight: 800; font-size: 1rem; padding: 17px 42px;
+      border-radius: 999px; text-decoration: none;
+      box-shadow: 0 6px 30px rgba(82,201,137,.38);
+      transition: all .25s;
+    }
+    .btn-cta-p:hover { background: #6edda0; transform: translateY(-2px); box-shadow: 0 10px 42px rgba(82,201,137,.48); }
+    .btn-cta-g {
+      background: rgba(255,255,255,.09); color: rgba(255,255,255,.85);
+      font-weight: 600; font-size: .97rem; padding: 17px 38px;
+      border-radius: 999px; text-decoration: none;
+      border: 1px solid rgba(255,255,255,.18);
+      transition: all .25s;
+    }
+    .btn-cta-g:hover { background: rgba(255,255,255,.15); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #050e08; color: rgba(255,255,255,.38);
+      padding: 36px 6%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 18px; font-size: .82rem;
+    }
+    .footer-brand { color: rgba(255,255,255,.72); font-weight: 800; font-size: .95rem; display: flex; align-items: center; gap: 8px; }
+    .footer-brand-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .footer-cats { display: flex; flex-wrap: wrap; gap: 0; }
+    .footer-cat {
+      color: rgba(255,255,255,.32); font-size: .77rem;
+      padding: 0 18px; border-right: 1px solid rgba(255,255,255,.12);
+    }
+    .footer-cat:last-child { border-right: none; padding-right: 0; }
+    .footer-cat:first-child { padding-left: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-stat-card { display: grid; grid-template-columns: repeat(2,1fr); }
+      .h-stat { border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); padding: 20px; }
+      .h-stat:nth-child(2n) { border-right: none; }
+      .prob-grid { grid-template-columns: 1fr; gap: 40px; }
+      .vendor-grid { grid-template-columns: repeat(2,1fr); }
+      .pkg-grid { grid-template-columns: 1fr; gap: 16px; }
+      .pkg-b { transform: none; }
+      .pkg-b:hover { transform: translateY(-5px); }
+      .flow-line { display: none; }
+      .flow-steps { grid-template-columns: repeat(3,1fr); gap: 28px; }
+    }
+    @media (max-width: 600px) {
+      nav .nav-links { display: none; }
+      .vendor-grid { grid-template-columns: 1fr; }
+      .flow-steps { grid-template-columns: repeat(2,1fr); }
+      .footer-cats { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo"><span class="nav-dot"></span>員工生活平衡計畫</a>
+  <ul class="nav-links">
+    <li><a href="#solutions">解決方案</a></li>
+    <li><a href="#team">合作團隊</a></li>
+    <li><a href="#packages">服務套餐</a></li>
+    <li><a href="#flow">合作流程</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">預約諮詢</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-blob blob-1"></div>
+  <div class="hero-blob blob-2"></div>
+  <div class="hero-blob blob-3"></div>
+  <div class="hero-grid-bg"></div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        ESG 永續 &nbsp;·&nbsp; 員工身心健康整合平台
+      </div>
+      <h1>讓員工<em>真正</em>好好生活<br>六大專業，一站到位</h1>
+      <p class="hero-desc">
+        整合芳療舒壓、藝術療癒、戶外冒險、農場體驗、EAP 諮詢與企業培訓，為企業打造全方位的員工身心照顧生態。
+      </p>
+      <div class="hero-btns">
+        <a href="#packages" class="btn-accent">探索服務方案</a>
+        <a href="#team" class="btn-ghost-light">
+          <span class="arrow-ring">↓</span> 認識合作夥伴
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-stat-card">
+      <div class="h-stat">
+        <div class="h-stat-num">6<sup>+</sup></div>
+        <div class="h-stat-lbl">專業服務領域</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-num">600<sup>+</sup></div>
+        <div class="h-stat-lbl">服務過的企業數</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-num">30<sup>+</sup></div>
+        <div class="h-stat-lbl">課程與體驗項目</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-num">18<sup>+</sup></div>
+        <div class="h-stat-lbl">年累積產業經驗</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROBLEM / SOLUTION ── -->
+<section class="sec sec-alt" id="solutions">
+  <div class="container">
+    <div class="prob-grid">
+
+      <div>
+        <div class="eyebrow">企業痛點</div>
+        <h2 class="sec-title">員工的壓力，<br>正在侵蝕企業的競爭力</h2>
+        <ul class="prob-list">
+          <li class="prob-item">
+            <span class="prob-emoji">😓</span>
+            <div>
+              <div class="prob-title">員工職業倦怠與流動率高</div>
+              <div class="prob-desc">長期高壓導致工作意願低落，優秀人才難以留住</div>
+            </div>
+          </li>
+          <li class="prob-item">
+            <span class="prob-emoji">🧩</span>
+            <div>
+              <div class="prob-title">關懷資源分散、缺乏整合</div>
+              <div class="prob-desc">企業想做員工照顧卻不知從何著手，資源零散</div>
+            </div>
+          </li>
+          <li class="prob-item">
+            <span class="prob-emoji">📉</span>
+            <div>
+              <div class="prob-title">ESG 報告缺乏具體員工關懷數據</div>
+              <div class="prob-desc">難以量化員工幸福感，ESG 社會面指標薄弱</div>
+            </div>
+          </li>
+          <li class="prob-item">
+            <span class="prob-emoji">🏢</span>
+            <div>
+              <div class="prob-title">活動辦理流於形式、員工沒感受</div>
+              <div class="prob-desc">年度尾牙之外缺乏真實身心支持的服務</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="eyebrow">我們的解方</div>
+        <h2 class="sec-title">六大專業整合，<br>解決不同需求</h2>
+        <div class="sol-cards">
+          <div class="sol-card">
+            <div class="sol-icon" style="background:#fdf0e0;">🌸</div>
+            <div>
+              <h4>感官療癒 — 即時舒壓</h4>
+              <p>芳療、藝術、農場體驗，讓身體先放鬆，開啟心理修復的大門</p>
+            </div>
+          </div>
+          <div class="sol-card">
+            <div class="sol-icon" style="background:#e6f4f6;">🧠</div>
+            <div>
+              <h4>專業 EAP — 系統性照顧</h4>
+              <p>從主管培訓到全員壓力管理，建立企業長期心理健康文化</p>
+            </div>
+          </div>
+          <div class="sol-card">
+            <div class="sol-icon" style="background:#e6f0f8;">🏕️</div>
+            <div>
+              <h4>戶外冒險 — 重建團隊凝聚</h4>
+              <p>突破職場框架，在自然環境中重建信任、強化歸屬感</p>
+            </div>
+          </div>
+          <div class="sol-card">
+            <div class="sol-icon" style="background:#eef7f2;">📊</div>
+            <div>
+              <h4>ESG 量化 — 強化永續報告</h4>
+              <p>每項服務皆可提供成效數據，直接支持企業 ESG 社會面指標</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── VENDORS ── -->
+<section class="sec" id="team">
+  <div class="container">
+    <div class="vendors-header">
+      <div class="eyebrow">合作團隊</div>
+      <h2 class="sec-title">六大專業服務夥伴</h2>
+      <p class="sec-sub">每位夥伴各擁獨特專業，共同組成完整的員工照顧生態系，根據企業需求靈活組合。</p>
+    </div>
+
+    <div class="vendor-grid">
+
+      <!-- IVY 芳療 -->
+      <div class="vcard v-sand">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">🌸</div>
+            <div>
+              <div class="vcard-name">黃敏菁 Ivy</div>
+              <div class="vcard-role">國際認證芳香療法師 · ESG 舒壓顧問</div>
+              <div class="vcard-tagline">用香氣撫慰職場疲憊的靈魂</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            透過精油科學與感官體驗，協助員工釋放焦慮、恢復身心平衡。擅長將芳療融入企業情境，從個人舒壓到組織健康文化，全面佈局。
+          </div>
+          <div class="vcard-label">課程 &amp; 服務</div>
+          <div class="vtags">
+            <span class="vtag">職場舒壓工作坊</span>
+            <span class="vtag">睡眠修復療癒課</span>
+            <span class="vtag">專注力芳療設計</span>
+            <span class="vtag">情緒平衡療法</span>
+            <span class="vtag">辦公室肩頸舒緩</span>
+            <span class="vtag">抗焦慮療癒課</span>
+            <span class="vtag">女性情緒芳療</span>
+            <span class="vtag">芳療冥想靜心</span>
+            <span class="vtag">ESG–EAP壓力舒緩</span>
+            <span class="vtag">芳療手作體驗</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 江雅筑 藝術療癒 -->
+      <div class="vcard v-purple">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">🎨</div>
+            <div>
+              <div class="vcard-name">江雅筑</div>
+              <div class="vcard-role">藝術療癒師 · 手作體驗講師</div>
+              <div class="vcard-tagline">以線條與色彩找回內心的寧靜</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            專精藝術療癒與各式手作體驗，讓員工在動手創作中沉澱思緒、抒發情感，無需藝術基礎即可感受創作帶來的療癒力量。
+          </div>
+          <div class="vcard-label">課程 &amp; 服務</div>
+          <div class="vtags">
+            <span class="vtag">和諧粉彩心風景</span>
+            <span class="vtag">禪繞紙扇</span>
+            <span class="vtag">線曼陀羅編織</span>
+            <span class="vtag">玻璃貼設計</span>
+            <span class="vtag">樹脂杯墊</span>
+            <span class="vtag">禪繞月球燈</span>
+            <span class="vtag">樹脂水晶掛畫</span>
+            <span class="vtag">禪繞杯墊</span>
+            <span class="vtag">手做花圈</span>
+            <span class="vtag">毛根娃娃</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 林子傑 EAP -->
+      <div class="vcard v-teal">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">🧠</div>
+            <div>
+              <div class="vcard-name">林子傑</div>
+              <div class="vcard-role">EAP 企業培訓講師 · 身心健康顧問</div>
+              <div class="vcard-tagline">18 年深耕，陪伴 600+ 企業走過壓力</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            擁有 18 年以上跨兩洲企業培訓經驗，服務超過 600 家企業。專精主管關懷技巧與員工身心健康，提供從覺察到行動的完整解方。
+          </div>
+          <div class="vcard-label">主管關懷系列</div>
+          <div class="vtags" style="margin-bottom:12px;">
+            <span class="vtag">壓力識別與關懷對話</span>
+            <span class="vtag">情緒勞動管理</span>
+            <span class="vtag">職場心理健康促進</span>
+            <span class="vtag">高效關懷領導力</span>
+            <span class="vtag">危機預防與支持</span>
+          </div>
+          <div class="vcard-label">員工舒壓系列</div>
+          <div class="vtags">
+            <span class="vtag">壓力認知與身心調節</span>
+            <span class="vtag">正念與呼吸減壓</span>
+            <span class="vtag">情緒自我照顧</span>
+            <span class="vtag">職場人際關係</span>
+            <span class="vtag">工作生活平衡實踐</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 心進化 -->
+      <div class="vcard v-green">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">💚</div>
+            <div>
+              <div class="vcard-name">心進化團隊</div>
+              <div class="vcard-role">企業工作生活平衡整合顧問</div>
+              <div class="vcard-tagline">從個人到組織，全面提升職場幸福感</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            提供最完整的企業員工照顧方案，涵蓋關懷協助、舒壓減壓、友善家庭及退休準備四大面向，協助企業建立長期健康文化。
+          </div>
+          <div class="vcard-label">四大服務面向</div>
+          <div class="vtags">
+            <span class="vtag">員工關懷協助</span>
+            <span class="vtag">員工舒壓減壓</span>
+            <span class="vtag">友善家庭措施</span>
+            <span class="vtag">退休銜接準備</span>
+            <span class="vtag">2–8 小時彈性規劃</span>
+            <span class="vtag">客製化組合設計</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 思凡自然農園 -->
+      <div class="vcard v-forest">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">🌱</div>
+            <div>
+              <div class="vcard-name">思凡自然農園</div>
+              <div class="vcard-role">社會農業 · ESG 自然體驗</div>
+              <div class="vcard-tagline">回到土地，讓身心重新呼吸</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            以社會農業為核心，結合香草植物與自然療癒，提供員工回歸土地的放鬆體驗，在農耕與手作中重拾生活節奏，落實 ESG 環境永續精神。
+          </div>
+          <div class="vcard-label">香草體驗課程</div>
+          <div class="vtags" style="margin-bottom:12px;">
+            <span class="vtag">青醬 DIY</span>
+            <span class="vtag">香草香包手作</span>
+            <span class="vtag">植物拓印</span>
+            <span class="vtag">香草鹽製作</span>
+            <span class="vtag">香草奶油製作</span>
+          </div>
+          <div class="vcard-label">企業合作模式</div>
+          <div class="vtags">
+            <span class="vtag">員工陪伴方案</span>
+            <span class="vtag">企業禮品方案</span>
+            <span class="vtag">公益回饋方案</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 戶外冒險 ESG -->
+      <div class="vcard v-blue">
+        <div class="vcard-stripe"></div>
+        <div class="vcard-body">
+          <div class="vcard-head">
+            <div class="vcard-icon">🏕️</div>
+            <div>
+              <div class="vcard-name">戶外冒險 ESG 團隊</div>
+              <div class="vcard-role">戶外探索 · 體驗式 ESG 活動</div>
+              <div class="vcard-tagline">突破舒適圈，在自然中重建信任</div>
+            </div>
+          </div>
+          <div class="vcard-bio">
+            專業戶外體驗設計師，結合攀樹、溯溪、峽谷探險等多元活動，透過親近自然的方式挑戰自我、強化團隊凝聚力與互信。
+          </div>
+          <div class="vcard-label">活動項目</div>
+          <div class="vtags">
+            <span class="vtag">🔥 火的魔法</span>
+            <span class="vtag">🪵 木的趣味</span>
+            <span class="vtag">🎋 腹愁者聯盟竹炊</span>
+            <span class="vtag">🌳 樹的擁抱–攀樹</span>
+            <span class="vtag">💧 溪的闖關–溯溪</span>
+            <span class="vtag">🏔️ 峽谷探險</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PACKAGES ── -->
+<section class="sec sec-dark" id="packages">
+  <div class="container">
+    <div class="packages-header" style="text-align:center; margin-bottom:60px; position:relative; z-index:2;">
+      <div class="eyebrow eyebrow-dark">推薦方案</div>
+      <h2 class="sec-title sec-title-white">三大整合套餐</h2>
+      <p class="sec-sub sec-sub-white" style="margin:0 auto;">依企業規模與需求選擇，每個方案皆可完全客製化組合。</p>
+    </div>
+    <div class="pkg-grid" style="position:relative; z-index:2;">
+
+      <div class="pkg-card pkg-a">
+        <span class="pkg-eyebrow">方案 A</span>
+        <div class="pkg-title">舒壓療癒方案</div>
+        <div class="pkg-desc">適合日常員工關懷，以室內感官療癒課程為主，操作靈活、員工好感度高。</div>
+        <div class="pkg-divider"></div>
+        <ul class="pkg-items">
+          <li class="pkg-item"><span class="pkg-check">✓</span>芳療舒壓工作坊（半天）</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>藝術療癒手作體驗</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>正念呼吸減壓課程</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>情緒自我照顧講座</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>ESG 成效數據報告</li>
+        </ul>
+      </div>
+
+      <div class="pkg-card pkg-b">
+        <span class="pkg-eyebrow">方案 B &nbsp;·&nbsp; 熱門推薦</span>
+        <div class="pkg-title">戶外 ESG 家庭日方案</div>
+        <div class="pkg-desc">適合員工家庭日、年度大型團建，結合自然體驗與 ESG 精神，讓員工家屬同感受。</div>
+        <div class="pkg-divider"></div>
+        <ul class="pkg-items">
+          <li class="pkg-item"><span class="pkg-check">✓</span>戶外冒險活動（攀樹 / 溯溪）</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>農場香草體驗課程</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>竹炊料理共食體驗</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>藝術療癒手作帶回家</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>ESG 自然教育導覽</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>企業 ESG 活動成效報告</li>
+        </ul>
+      </div>
+
+      <div class="pkg-card pkg-c">
+        <span class="pkg-eyebrow">方案 C</span>
+        <div class="pkg-title">全方位 EAP 年度方案</div>
+        <div class="pkg-desc">適合中大型企業，整合全年度員工身心健康促進計畫，建立企業照顧品牌。</div>
+        <div class="pkg-divider"></div>
+        <ul class="pkg-items">
+          <li class="pkg-item"><span class="pkg-check">✓</span>主管關懷技巧培訓</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>員工壓力管理系列課程</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>芳療 / 藝療定期體驗</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>農場 / 戶外半年活動</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>友善家庭 &amp; 退休準備課程</li>
+          <li class="pkg-item"><span class="pkg-check">✓</span>年度 ESG 員工健康白皮書</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FLOW ── -->
+<section class="sec sec-alt" id="flow">
+  <div class="container">
+    <div class="flow-header" style="text-align:center; margin-bottom:72px;">
+      <div class="eyebrow">合作流程</div>
+      <h2 class="sec-title">六步驟，輕鬆啟動</h2>
+    </div>
+    <div class="flow-wrap">
+      <div class="flow-line"></div>
+      <div class="flow-steps">
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">1</span>
+            <span class="f-emoji">💬</span>
+          </div>
+          <h4>初步諮詢</h4>
+          <p>了解企業文化與員工需求</p>
+        </div>
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">2</span>
+            <span class="f-emoji">🗺️</span>
+          </div>
+          <h4>方案規劃</h4>
+          <p>客製化組合服務項目</p>
+        </div>
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">3</span>
+            <span class="f-emoji">📋</span>
+          </div>
+          <h4>提案確認</h4>
+          <p>確認課程內容與時程</p>
+        </div>
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">4</span>
+            <span class="f-emoji">🤝</span>
+          </div>
+          <h4>合約確認</h4>
+          <p>確認執行細節與安排</p>
+        </div>
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">5</span>
+            <span class="f-emoji">🚀</span>
+          </div>
+          <h4>執行服務</h4>
+          <p>專業團隊進駐執行</p>
+        </div>
+        <div class="f-step">
+          <div class="f-circle">
+            <span class="f-num">6</span>
+            <span class="f-emoji">📊</span>
+          </div>
+          <h4>成效報告</h4>
+          <p>提供 ESG 成效數據報告</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-sec" id="contact">
+  <div class="cta-inner">
+    <div class="eyebrow eyebrow-dark" style="justify-content:center; display:flex;">立即開始</div>
+    <h2>讓員工感受到<em>真實的關懷</em><br>從今天開始</h2>
+    <p>無論企業規模大小，我們都能為您量身規劃最合適的方案，真正讓員工感受到被照顧。</p>
+    <div class="cta-btns">
+      <a href="mailto:contact@example.com" class="btn-cta-p">預約免費諮詢</a>
+      <a href="#team" class="btn-cta-g">了解更多夥伴</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand"><span class="footer-brand-dot"></span>員工生活平衡計畫</div>
+  <div class="footer-cats">
+    <span class="footer-cat">芳療舒壓</span>
+    <span class="footer-cat">藝術療癒</span>
+    <span class="footer-cat">EAP 培訓</span>
+    <span class="footer-cat">團體建立</span>
+    <span class="footer-cat">自然農園</span>
+    <span class="footer-cat">戶外冒險</span>
+  </div>
+  <span>ESG 永續 · 員工身心健康</span>
+</footer>
+
+</body>
+</html>

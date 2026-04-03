@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>精油香氛覺察表 — 身心狀態評估</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:    #0a2218;
+      --primary: #1a5c3a;
+      --mid:     #2d7a52;
+      --accent:  #52c989;
+      --gold:    #e8c56a;
+      --bg:      #faf9f6;
+      --bg2:     #f0f7f3;
+      --text:    #1c1c1e;
+      --muted:   #5c6e63;
+      --border:  #dde8e2;
+      --white:   #ffffff;
+      --r: 16px;
+      --shadow-sm: 0 2px 12px rgba(10,34,24,.07);
+      --shadow-md: 0 8px 32px rgba(10,34,24,.11);
+    }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: "Noto Sans TC", system-ui, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.7; min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--dark);
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-logo {
+      display: flex; align-items: center; gap: 9px;
+      font-size: .88rem; font-weight: 800; color: #fff;
+    }
+    .topbar-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }
+    .topbar-step { font-size: .78rem; color: rgba(255,255,255,.45); font-weight: 500; }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { background: rgba(255,255,255,.08); height: 3px; }
+    .progress-bar {
+      height: 3px; background: var(--accent);
+      transition: width .4s ease;
+    }
+
+    /* ── WRAPPER ── */
+    .form-wrap {
+      max-width: 560px; margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    /* ── STEP PANEL ── */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp .35s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── STEP HEADER ── */
+    .step-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .7rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .step-eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--accent); border-radius: 2px; }
+    .step-title {
+      font-size: 1.45rem; font-weight: 900; line-height: 1.25;
+      letter-spacing: -.02em; color: var(--dark); margin-bottom: 8px;
+    }
+    .step-desc { font-size: .88rem; color: var(--muted); line-height: 1.8; margin-bottom: 28px; }
+
+    /* ── FORM FIELDS ── */
+    .field { margin-bottom: 20px; }
+    .field label {
+      display: block; font-size: .82rem; font-weight: 700;
+      color: var(--primary); margin-bottom: 7px; letter-spacing: .01em;
+    }
+    .field label span { color: var(--accent); }
+    .field input, .field select {
+      width: 100%; padding: 13px 16px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      font-family: inherit; font-size: .93rem; color: var(--text);
+      background: var(--white); outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(82,201,137,.15);
+    }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235c6e63' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px; }
+
+    /* ── INDEX CARDS (壓力/疲憊) ── */
+    .index-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+    .index-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--r); padding: 20px 16px;
+      text-align: center; box-shadow: var(--shadow-sm);
+    }
+    .index-card .ic-emoji { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+    .index-card .ic-label { font-size: .78rem; font-weight: 700; color: var(--primary); margin-bottom: 14px; }
+    .index-card .ic-val {
+      font-size: 2.2rem; font-weight: 900; color: var(--dark);
+      line-height: 1; margin-bottom: 10px; letter-spacing: -.04em;
+    }
+    .index-card .ic-val span { font-size: .9rem; color: var(--muted); font-weight: 400; }
+    input[type="range"] {
+      -webkit-appearance: none; width: 100%; height: 5px;
+      border-radius: 99px; background: var(--border); outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 22px; height: 22px;
+      border-radius: 50%; background: var(--accent);
+      box-shadow: 0 2px 8px rgba(82,201,137,.45); cursor: pointer;
+      transition: transform .15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.15); }
+    .range-labels {
+      display: flex; justify-content: space-between;
+      font-size: .7rem; color: var(--muted); margin-top: 5px;
+    }
+
+    /* ── OIL GRID ── */
+    .oil-category { margin-bottom: 28px; }
+    .oil-cat-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .oil-cat-label::before { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .oil-cat-label::after  { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .oil-list { display: flex; flex-direction: column; gap: 10px; }
+    .oil-item {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      box-shadow: var(--shadow-sm); transition: border-color .2s;
+    }
+    .oil-item.rated { border-color: rgba(82,201,137,.5); }
+    .oil-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .oil-name-wrap { display: flex; align-items: center; gap: 10px; }
+    .oil-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .oil-name { font-size: .93rem; font-weight: 700; color: var(--dark); }
+    .oil-en   { font-size: .73rem; color: var(--muted); }
+    .oil-score {
+      font-size: 1.3rem; font-weight: 900; color: var(--accent);
+      min-width: 32px; text-align: right; letter-spacing: -.03em;
+    }
+    .oil-score.zero { color: var(--border); }
+    .oil-keyword {
+      display: inline-block;
+      font-size: .69rem; color: var(--muted); background: var(--bg2);
+      border-radius: 99px; padding: 2px 9px; margin-top: 2px;
+    }
+
+    /* ── NOTICE BOX ── */
+    .notice {
+      background: rgba(82,201,137,.1); border: 1px solid rgba(82,201,137,.25);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: .81rem; color: var(--primary); line-height: 1.75;
+      margin-bottom: 22px; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .notice-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      width: 100%; padding: 16px;
+      background: var(--accent); color: var(--dark);
+      font-family: inherit; font-size: 1rem; font-weight: 800;
+      border: none; border-radius: 999px; cursor: pointer;
+      box-shadow: 0 4px 24px rgba(82,201,137,.35);
+      transition: all .22s; letter-spacing: .01em;
+    }
+    .btn-primary:hover { background: #6edda0; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(82,201,137,.42); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { background: var(--border); color: var(--muted); box-shadow: none; cursor: not-allowed; transform: none; }
+    .btn-back {
+      width: 100%; padding: 14px;
+      background: transparent; color: var(--muted);
+      font-family: inherit; font-size: .88rem; font-weight: 600;
+      border: 1.5px solid var(--border); border-radius: 999px; cursor: pointer;
+      margin-top: 10px; transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ── RESULT PAGE ── */
+    .result-hero {
+      background: var(--dark); border-radius: 20px;
+      padding: 28px 22px; margin-bottom: 20px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .result-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(60px); pointer-events: none;
+    }
+    .rb-1 { width: 200px; height: 200px; background: #1a5c3a; opacity: .3; top: -60px; right: -40px; }
+    .rb-2 { width: 150px; height: 150px; background: #52c989; opacity: .15; bottom: -40px; left: -20px; }
+    .result-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(82,201,137,.18); border: 2px solid rgba(82,201,137,.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 14px; position: relative; z-index: 2;
+    }
+    .result-name { font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 4px; position: relative; z-index: 2; }
+    .result-type { font-size: .78rem; color: var(--accent); font-weight: 600; letter-spacing: .08em; position: relative; z-index: 2; }
+
+    .result-scores {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+    }
+    .rs-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 16px; text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .rs-icon { font-size: 1.4rem; margin-bottom: 4px; display: block; }
+    .rs-label { font-size: .72rem; color: var(--muted); margin-bottom: 6px; }
+    .rs-bar-wrap { background: var(--bg2); border-radius: 99px; height: 6px; overflow: hidden; }
+    .rs-bar { height: 6px; border-radius: 99px; background: var(--accent); transition: width 1s ease; }
+    .rs-bar.high { background: #e85252; }
+    .rs-bar.mid  { background: var(--gold); }
+    .rs-val { font-size: 1.4rem; font-weight: 900; color: var(--dark); margin-top: 6px; }
+
+    .result-section { margin-bottom: 20px; }
+    .rs-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .rs-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    .analysis-box {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--r); padding: 18px 16px;
+      box-shadow: var(--shadow-sm); font-size: .88rem; line-height: 1.9; color: var(--text);
+    }
+    .analysis-box strong { color: var(--primary); }
+
+    .top-oils { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .oil-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 99px; padding: 6px 12px;
+      font-size: .78rem; font-weight: 600; color: var(--primary);
+    }
+    .oil-tag span { font-size: .9rem; }
+
+    .recommend-cards { display: flex; flex-direction: column; gap: 10px; }
+    .rec-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 16px;
+      box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;
+    }
+    .rec-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .rec-card h4 { font-size: .9rem; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .rec-card p  { font-size: .78rem; color: var(--muted); line-height: 1.65; }
+
+    .coupon-box {
+      background: linear-gradient(135deg, var(--dark) 0%, #1a5c3a 100%);
+      border-radius: var(--r); padding: 20px;
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .coupon-icon { font-size: 2.2rem; flex-shrink: 0; }
+    .coupon-text h4 { font-size: .95rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .coupon-text p  { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .coupon-code {
+      margin-top: 8px; display: inline-block;
+      background: var(--accent); color: var(--dark);
+      font-size: .82rem; font-weight: 800; letter-spacing: .08em;
+      border-radius: 8px; padding: 5px 14px;
+    }
+
+    .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .btn-share {
+      padding: 12px; border-radius: 12px;
+      font-family: inherit; font-size: .8rem; font-weight: 700;
+      cursor: pointer; border: none; transition: all .2s; text-align: center;
+    }
+    .btn-share-line { background: #06C755; color: #fff; }
+    .btn-share-line:hover { background: #05b34b; }
+    .btn-share-copy { background: var(--bg2); color: var(--primary); border: 1.5px solid var(--border); }
+    .btn-share-copy:hover { background: var(--border); }
+
+    /* ── FOOTER ── */
+    .form-footer {
+      text-align: center; margin-top: 28px;
+      font-size: .72rem; color: var(--muted); line-height: 1.8;
+    }
+    .form-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── ERROR ── */
+    .err-msg {
+      font-size: .77rem; color: #e85252; margin-top: 5px; display: none;
+    }
+    .err-msg.show { display: block; }
+    .field.error input, .field.error select { border-color: #e85252; }
+
+    /* ── 職業自填欄位 ── */
+    .job-other-wrap {
+      overflow: hidden; max-height: 0;
+      transition: max-height .28s ease, margin-top .28s ease;
+      margin-top: 0;
+    }
+    .job-other-wrap.show { max-height: 80px; margin-top: 10px; }
+
+    /* ── 困擾排名 ── */
+    .concern-title {
+      font-size: .82rem; font-weight: 700; color: var(--primary);
+      margin-bottom: 8px; letter-spacing: .01em;
+    }
+    .concern-hint { font-size: .75rem; color: var(--muted); margin-bottom: 12px; }
+    .concern-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;
+    }
+    .concern-chip {
+      position: relative; padding: 11px 12px 11px 38px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      background: var(--white); cursor: pointer;
+      font-size: .82rem; color: var(--text); font-weight: 500;
+      transition: all .18s; user-select: none; -webkit-user-select: none;
+      box-shadow: var(--shadow-sm); line-height: 1.35;
+    }
+    .concern-chip:hover { border-color: rgba(82,201,137,.4); background: var(--bg2); }
+    .concern-chip.selected {
+      border-color: var(--accent); background: rgba(82,201,137,.08);
+      color: var(--primary); font-weight: 700;
+    }
+    .concern-chip.maxed:not(.selected) { opacity: .45; pointer-events: none; }
+    .concern-rank-badge {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .68rem; font-weight: 900;
+      background: var(--border); color: var(--muted);
+      transition: all .18s;
+    }
+    .concern-chip.selected .concern-rank-badge {
+      background: var(--accent); color: var(--dark);
+    }
+    .concern-selected-preview {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; margin-top: 6px;
+      font-size: .78rem; color: var(--muted); min-height: 38px;
+    }
+    .concern-selected-preview .csp-item {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-right: 8px; color: var(--primary); font-weight: 600;
+    }
+    .concern-selected-preview .csp-num {
+      background: var(--accent); color: var(--dark);
+      width: 16px; height: 16px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .62rem; font-weight: 900; flex-shrink: 0;
+    }
+
+    /* ── Email 狀態 ── */
+    .email-status {
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+      font-size: .82rem; line-height: 1.75; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .email-status.sending {
+      background: rgba(82,130,201,.1); border: 1px solid rgba(82,130,201,.25); color: #2a5a9a;
+    }
+    .email-status.success {
+      background: rgba(82,201,137,.1); border: 1px solid rgba(82,201,137,.3); color: var(--primary);
+    }
+    .email-status.error {
+      background: rgba(232,82,82,.08); border: 1px solid rgba(232,82,82,.2); color: #b03030;
+    }
+    .email-status-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin .8s linear infinite; }
+
+    @media (max-width: 400px) {
+      .index-cards { grid-template-columns: 1fr; }
+      .result-scores { grid-template-columns: 1fr; }
+      .concern-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-dot"></div>
+    精油香氛覺察表
+  </div>
+  <div class="topbar-step" id="stepIndicator">步驟 1 / 3</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar" id="progressBar" style="width:33%"></div>
+</div>
+
+<!-- FORM WRAPPER -->
+<div class="form-wrap">
+
+  <!-- ══════════════════════════════
+       STEP 1 — 基本資料
+  ══════════════════════════════ -->
+  <div class="step active" id="step1">
+    <div class="step-eyebrow">基本資料</div>
+    <h1 class="step-title">歡迎來到<br>香氛覺察體驗</h1>
+    <p class="step-desc">透過這份評估，我們將為您分析身心狀態，並根據您對香氣的直覺反應，提供個人化的精油建議。約需 3–5 分鐘完成。</p>
+
+    <div class="field" id="fieldName">
+      <label>您的姓名 <span>*</span></label>
+      <input type="text" id="inputName" placeholder="請輸入姓名" autocomplete="name">
+      <div class="err-msg" id="errName">請填寫姓名</div>
+    </div>
+
+    <div class="field" id="fieldEmail">
+      <label>Email <span>*</span></label>
+      <input type="email" id="inputEmail" placeholder="用於接收您的個人分析報告" autocomplete="email">
+      <div class="err-msg" id="errEmail">請填寫有效的 Email</div>
+    </div>
+
+    <div class="field">
+      <label>職業類別</label>
+      <select id="inputJob" onchange="toggleJobOther(this.value)">
+        <option value="">— 請選擇 —</option>
+        <option>上班族／辦公室工作</option>
+        <option>管理／主管職</option>
+        <option>教育工作者</option>
+        <option>醫療／社福工作者</option>
+        <option>服務業</option>
+        <option>自由工作者</option>
+        <option>創業主</option>
+        <option>學生</option>
+        <option value="其他">其他（請填寫）</option>
+      </select>
+      <div class="job-other-wrap" id="jobOtherWrap">
+        <input type="text" id="inputJobOther" placeholder="請輸入您的職業">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>年齡區間</label>
+      <select id="inputAge">
+        <option value="">— 請選擇 —</option>
+        <option>20 歲以下</option>
+        <option>21–30 歲</option>
+        <option>31–40 歲</option>
+        <option>41–50 歲</option>
+        <option>51–60 歲</option>
+        <option>60 歲以上</option>
+      </select>
+    </div>
+
+    <div class="notice">
+      <div class="notice-icon">🔒</div>
+      <div>您的資料將用於個人化分析及學術研究用途（匿名彙整），不會對外公開或轉售。</div>
+    </div>
+
+    <button class="btn-primary" onclick="goStep(2)">下一步：身心狀態評估 →</button>
+  </div>
+
+  <!-- ══════════════════════════════
+       STEP 2 — 壓力 & 疲憊指數
+  ══════════════════════════════ -->
+  <div class="step" id="step2">
+    <div class="step-eyebrow">身心狀態</div>
+    <h1 class="step-title">此刻，<br>您的狀態如何？</h1>
+    <p class="step-desc">請根據今天的實際感受，誠實地拉動滑桿。沒有對錯，只有真實的您。</p>
+
+    <div class="index-cards">
+      <div class="index-card">
+        <span class="ic-emoji">😤</span>
+        <div class="ic-label">壓力指數</div>
+        <div class="ic-val" id="stressVal">5 <span>/ 10</span></div>
+        <input type="range" id="stressRange" min="1" max="10" value="5"
+               oninput="updateRange('stress')">
+        <div class="range-labels"><span>輕鬆</span><span>極大</span></div>
+      </div>
+      <div class="index-card">
+        <span class="ic-emoji">😴</span>
+        <div class="ic-label">疲憊指數</div>
+        <div class="ic-val" id="fatigueVal">5 <span>/ 10</span></div>
+        <input type="range" id="fatigueRange" min="1" max="10" value="5"
+               oninput="updateRange('fatigue')">
+        <div class="range-labels"><span>充沛</span><span>極累</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div class="concern-title">最近讓您困擾的是？（可選）</div>
+      <div class="concern-hint">點選最多三項，依困擾程度排列 — 第一個點的是最困擾的</div>
+      <div class="concern-grid" id="concernGrid">
+        <div class="concern-chip" onclick="toggleConcern(this,'工作壓力太大')">
+          <span class="concern-rank-badge">—</span>工作壓力太大
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'睡眠品質不佳')">
+          <span class="concern-rank-badge">—</span>睡眠品質不佳
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'情緒起伏難控制')">
+          <span class="concern-rank-badge">—</span>情緒起伏難控制
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'身體疲勞／痠痛')">
+          <span class="concern-rank-badge">—</span>身體疲勞／痠痛
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'人際關係困擾')">
+          <span class="concern-rank-badge">—</span>人際關係困擾
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'焦慮／憂鬱傾向')">
+          <span class="concern-rank-badge">—</span>焦慮／憂鬱傾向
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'缺乏生活動力')">
+          <span class="concern-rank-badge">—</span>缺乏生活動力
+        </div>
+        <div class="concern-chip" onclick="toggleConcern(this,'專注力／記憶力下降')">
+          <span class="concern-rank-badge">—</span>專注力／記憶力下降
+        </div>
+      </div>
+      <div class="concern-selected-preview" id="concernPreview">尚未選擇</div>
+    </div>
+
+    <div class="notice">
+      <div class="notice-icon">💡</div>
+      <div>接下來將請您評估 12 支精油的喜好程度。請跟隨直覺，第一印象最準確！</div>
+    </div>
+
+    <button class="btn-primary" onclick="goStep(3)">下一步：精油喜好評分 →</button>
+    <button class="btn-back" onclick="goStep(1)">← 返回</button>
+  </div>
+
+  <!-- ══════════════════════════════
+       STEP 3 — 精油喜好評分
+  ══════════════════════════════ -->
+  <div class="step" id="step3">
+    <div class="step-eyebrow">精油覺察</div>
+    <h1 class="step-title">12 支精油，<br>您最喜歡哪些？</h1>
+    <p class="step-desc">聞過香氣後，依照直覺給分（1 = 不喜歡，10 = 非常喜歡）。若尚未聞過，可根據印象或香調描述評分。</p>
+
+    <!-- 花香類 -->
+    <div class="oil-category">
+      <div class="oil-cat-label">🌸 花香類</div>
+      <div class="oil-list">
+        <div class="oil-item" id="oilItem0">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌿</div>
+              <div>
+                <div class="oil-name">薰衣草</div>
+                <div class="oil-en">Lavender</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore0">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="0"
+                 oninput="updateOil(0, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">舒壓</span><span class="oil-keyword">助眠</span><span class="oil-keyword">舒緩焦慮</span></div>
+        </div>
+        <div class="oil-item" id="oilItem1">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌹</div>
+              <div>
+                <div class="oil-name">玫瑰</div>
+                <div class="oil-en">Rose</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore1">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="1"
+                 oninput="updateOil(1, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">情感滋養</span><span class="oil-keyword">自我疼愛</span><span class="oil-keyword">幸福感</span></div>
+        </div>
+        <div class="oil-item" id="oilItem2">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌺</div>
+              <div>
+                <div class="oil-name">依蘭依蘭</div>
+                <div class="oil-en">Ylang Ylang</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore2">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="2"
+                 oninput="updateOil(2, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">釋放壓力</span><span class="oil-keyword">感性</span><span class="oil-keyword">自信</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 柑橘類 -->
+    <div class="oil-category">
+      <div class="oil-cat-label">🍊 柑橘類</div>
+      <div class="oil-list">
+        <div class="oil-item" id="oilItem3">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🍊</div>
+              <div>
+                <div class="oil-name">甜橙</div>
+                <div class="oil-en">Sweet Orange</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore3">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="3"
+                 oninput="updateOil(3, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">開朗</span><span class="oil-keyword">提振情緒</span><span class="oil-keyword">陽光感</span></div>
+        </div>
+        <div class="oil-item" id="oilItem4">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🫐</div>
+              <div>
+                <div class="oil-name">佛手柑</div>
+                <div class="oil-en">Bergamot</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore4">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="4"
+                 oninput="updateOil(4, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">抗焦慮</span><span class="oil-keyword">淡雅柑橘</span><span class="oil-keyword">平衡</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 草本類 -->
+    <div class="oil-category">
+      <div class="oil-cat-label">🌿 草本類</div>
+      <div class="oil-list">
+        <div class="oil-item" id="oilItem5">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌱</div>
+              <div>
+                <div class="oil-name">薄荷</div>
+                <div class="oil-en">Peppermint</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore5">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="5"
+                 oninput="updateOil(5, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">提神醒腦</span><span class="oil-keyword">清涼</span><span class="oil-keyword">專注</span></div>
+        </div>
+        <div class="oil-item" id="oilItem6">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌿</div>
+              <div>
+                <div class="oil-name">迷迭香</div>
+                <div class="oil-en">Rosemary</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore6">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="6"
+                 oninput="updateOil(6, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">記憶力</span><span class="oil-keyword">活力</span><span class="oil-keyword">清晰思考</span></div>
+        </div>
+        <div class="oil-item" id="oilItem7">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌲</div>
+              <div>
+                <div class="oil-name">茶樹</div>
+                <div class="oil-en">Tea Tree</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore7">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="7"
+                 oninput="updateOil(7, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">淨化</span><span class="oil-keyword">抗菌</span><span class="oil-keyword">清新</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 木質/樹脂類 -->
+    <div class="oil-category">
+      <div class="oil-cat-label">🪵 木質 / 樹脂類</div>
+      <div class="oil-list">
+        <div class="oil-item" id="oilItem8">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌲</div>
+              <div>
+                <div class="oil-name">雪松</div>
+                <div class="oil-en">Cedarwood</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore8">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="8"
+                 oninput="updateOil(8, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">穩定</span><span class="oil-keyword">接地</span><span class="oil-keyword">深層放鬆</span></div>
+        </div>
+        <div class="oil-item" id="oilItem9">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🧿</div>
+              <div>
+                <div class="oil-name">乳香</div>
+                <div class="oil-en">Frankincense</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore9">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="9"
+                 oninput="updateOil(9, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">靈性</span><span class="oil-keyword">深呼吸</span><span class="oil-keyword">冥想</span></div>
+        </div>
+        <div class="oil-item" id="oilItem10">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌏</div>
+              <div>
+                <div class="oil-name">廣藿香</div>
+                <div class="oil-en">Patchouli</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore10">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="10"
+                 oninput="updateOil(10, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">大地感</span><span class="oil-keyword">安全感</span><span class="oil-keyword">感官</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 清新類 -->
+    <div class="oil-category">
+      <div class="oil-cat-label">💨 清新類</div>
+      <div class="oil-list">
+        <div class="oil-item" id="oilItem11">
+          <div class="oil-header">
+            <div class="oil-name-wrap">
+              <div class="oil-icon">🌬️</div>
+              <div>
+                <div class="oil-name">尤加利</div>
+                <div class="oil-en">Eucalyptus</div>
+              </div>
+            </div>
+            <div class="oil-score zero" id="oilScore11">—</div>
+          </div>
+          <input type="range" min="0" max="10" value="0" data-idx="11"
+                 oninput="updateOil(11, this.value)">
+          <div class="range-labels"><span>不喜歡</span><span>10 非常喜歡</span></div>
+          <div><span class="oil-keyword">呼吸道</span><span class="oil-keyword">清明</span><span class="oil-keyword">解放</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <div class="notice-icon">✨</div>
+      <div>評分完畢後，系統將立即為您生成<strong>個人化香氛分析報告</strong>，同時寄送到您的 Email。</div>
+    </div>
+
+    <button class="btn-primary" id="submitBtn" onclick="submitForm()">產生我的分析報告 →</button>
+    <button class="btn-back" onclick="goStep(2)">← 返回</button>
+  </div>
+
+  <!-- ══════════════════════════════
+       STEP 4 — 分析結果
+  ══════════════════════════════ -->
+  <div class="step" id="step4">
+
+    <div class="result-hero">
+      <div class="result-blob rb-1"></div>
+      <div class="result-blob rb-2"></div>
+      <div class="result-avatar" id="resultAvatar">🌿</div>
+      <div class="result-name" id="resultName">您的分析報告</div>
+      <div class="result-type" id="resultType">香氛人格類型</div>
+    </div>
+
+    <!-- 壓力 / 疲憊 視覺化 -->
+    <div class="result-scores">
+      <div class="rs-card">
+        <span class="rs-icon">😤</span>
+        <div class="rs-label">壓力指數</div>
+        <div class="rs-bar-wrap"><div class="rs-bar" id="rsStressBar" style="width:0%"></div></div>
+        <div class="rs-val" id="rsStressVal">—</div>
+      </div>
+      <div class="rs-card">
+        <span class="rs-icon">😴</span>
+        <div class="rs-label">疲憊指數</div>
+        <div class="rs-bar-wrap"><div class="rs-bar" id="rsFatigueBar" style="width:0%"></div></div>
+        <div class="rs-val" id="rsFatigueVal">—</div>
+      </div>
+    </div>
+
+    <!-- 狀態分析 -->
+    <div class="result-section">
+      <div class="rs-title">身心狀態分析</div>
+      <div class="analysis-box" id="analysisText">—</div>
+    </div>
+
+    <!-- 喜愛精油 -->
+    <div class="result-section">
+      <div class="rs-title">您的前三名精油</div>
+      <div class="top-oils" id="topOilsWrap"></div>
+    </div>
+
+    <!-- 香氛人格 -->
+    <div class="result-section">
+      <div class="rs-title">香氛人格解析</div>
+      <div class="analysis-box" id="personalityText">—</div>
+    </div>
+
+    <!-- 課程推薦 -->
+    <div class="result-section">
+      <div class="rs-title">為您推薦的課程</div>
+      <div class="recommend-cards" id="recommendCards"></div>
+    </div>
+
+    <!-- Email 狀態 -->
+    <div class="email-status sending" id="emailStatus">
+      <span class="email-status-icon spin">⏳</span>
+      <div>正在將分析報告寄送至您的 Email，請稍候…</div>
+    </div>
+
+    <!-- 困擾排名 -->
+    <div class="result-section" id="concernResultSection" style="display:none">
+      <div class="rs-title">您的困擾排名</div>
+      <div class="analysis-box" id="concernResultText">—</div>
+    </div>
+
+    <!-- 折價券 -->
+    <div class="coupon-box">
+      <div class="coupon-icon">🎁</div>
+      <div class="coupon-text">
+        <h4>專屬體驗折價券</h4>
+        <p>憑此券報名課程享 <strong style="color:var(--gold)">NT$200 折扣</strong><br>或購買精油產品享 <strong style="color:var(--gold)">NT$100 折扣</strong></p>
+        <div class="coupon-code" id="couponCode">AROMA2025</div>
+      </div>
+    </div>
+
+    <!-- 分享 -->
+    <div class="share-row">
+      <button class="btn-share btn-share-line" onclick="shareLine()">📲 分享 LINE</button>
+      <button class="btn-share btn-share-copy" onclick="copyLink()">🔗 複製連結</button>
+    </div>
+
+    <div class="form-footer">
+      <p id="footerEmailNote">報告寄送中…</p>
+      <p style="margin-top:6px;">© 員工生活平衡計畫｜<a href="index.html">了解更多服務</a></p>
+    </div>
+
+  </div>
+</div><!-- /form-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ══════════════════════════════════════════════════════════
+  // ⚙️  後端設定（兩組填完才能完整運作）
+  // ══════════════════════════════════════════════════════════
+
+  // 1) Google Apps Script URL（雲端儲存）
+  //    設定方式：開啟 apps-script.gs 檔，按照說明部署後填入
+  const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+
+  // 2) EmailJS（自動寄送分析報告）
+  //    申請：https://www.emailjs.com  每月 200 封免費
+  const EJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+  const EJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+  const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+  // ══════════════════════════════════════════════════════════
+
+  // ── 精油資料 ──────────────────────────────────────────────
+  const OILS = [
+    { name:'薰衣草', en:'Lavender',      icon:'🌿', cat:'flower', keywords:['舒壓','助眠','舒緩焦慮'] },
+    { name:'玫瑰',   en:'Rose',           icon:'🌹', cat:'flower', keywords:['情感滋養','幸福感'] },
+    { name:'依蘭依蘭',en:'Ylang Ylang',  icon:'🌺', cat:'flower', keywords:['感性','自信'] },
+    { name:'甜橙',   en:'Sweet Orange',   icon:'🍊', cat:'citrus', keywords:['開朗','提振情緒'] },
+    { name:'佛手柑', en:'Bergamot',       icon:'🫐', cat:'citrus', keywords:['抗焦慮','平衡'] },
+    { name:'薄荷',   en:'Peppermint',     icon:'🌱', cat:'herb',   keywords:['提神','專注'] },
+    { name:'迷迭香', en:'Rosemary',       icon:'🌿', cat:'herb',   keywords:['活力','清晰'] },
+    { name:'茶樹',   en:'Tea Tree',       icon:'🌲', cat:'herb',   keywords:['淨化','清新'] },
+    { name:'雪松',   en:'Cedarwood',      icon:'🌲', cat:'wood',   keywords:['穩定','接地'] },
+    { name:'乳香',   en:'Frankincense',   icon:'🧿', cat:'wood',   keywords:['靈性','冥想'] },
+    { name:'廣藿香', en:'Patchouli',      icon:'🌏', cat:'wood',   keywords:['安全感','感官'] },
+    { name:'尤加利', en:'Eucalyptus',     icon:'🌬️', cat:'fresh',  keywords:['清明','解放'] },
+  ];
+
+  // 香氛人格類型
+  const PERSONALITIES = {
+    flower: {
+      type: '浪漫滋養型',
+      avatar: '🌹',
+      desc: '您對花香的偏好，反映出內心對溫柔與被理解的渴望。您是一個情感細膩、富有同理心的人，容易感受到周圍人的情緒，也需要足夠的自我滋養。<br><br><strong>建議：</strong>日常可使用薰衣草或玫瑰按摩油，在入浴或睡前給自己五分鐘的放鬆儀式，重建與自己身體的連結。'
+    },
+    citrus: {
+      type: '活力陽光型',
+      avatar: '🍊',
+      desc: '柑橘類香氣的偏好，顯示您天生樂觀、渴望與人連結。您容易受環境影響情緒，需要輕盈、充滿活力的能量來維持積極狀態。<br><br><strong>建議：</strong>工作開始前擴香甜橙或佛手柑，為一天注入正向能量；情緒低落時直接深吸精油瓶，效果顯著。'
+    },
+    herb: {
+      type: '清晰理性型',
+      avatar: '🌿',
+      desc: '草本香氣的選擇，反映您重視效率與清晰思考。您可能正在面對高度的腦力負荷，需要「快速重置」讓自己回到專注狀態。<br><br><strong>建議：</strong>午後疲勞時使用薄荷或迷迭香滾珠塗抹太陽穴，能有效提振專注力，比喝咖啡更持久溫和。'
+    },
+    wood: {
+      type: '深根沉穩型',
+      avatar: '🪵',
+      desc: '木質與樹脂香氣的偏好，顯示您重視穩定、內在平靜與深度連結。您可能正在尋找一個可以「放下」一切的空間，讓過度運轉的大腦得到真正的休息。<br><br><strong>建議：</strong>睡前以雪松或乳香做深呼吸冥想，有助於降低皮質醇，改善睡眠品質與晨起狀態。'
+    },
+    fresh: {
+      type: '自由清明型',
+      avatar: '🌬️',
+      desc: '清新香氣的偏好，顯示您渴望「清空」與自由呼吸。您可能感覺被某些事情困住，需要一種「重新開始」的清爽感受。<br><br><strong>建議：</strong>在密閉空間工作時使用尤加利擴香，有助於提升專注力並減少悶塞感。戶外活動前塗抹，能強化身心的清明狀態。'
+    }
+  };
+
+  // ── 狀態 ─────────────────────────────────────────────────
+  const oilScores = new Array(12).fill(0);
+  let stressScore   = 5;
+  let fatigueScore  = 5;
+  let concernRanking = [];   // 最多 3 項，依點選順序排列
+
+  // ── 更新滑桿顯示 ──────────────────────────────────────────
+  function updateRange(type) {
+    const val = parseInt(document.getElementById(type + 'Range').value);
+    document.getElementById(type + 'Val').innerHTML = val + ' <span>/ 10</span>';
+    if (type === 'stress')  stressScore  = val;
+    if (type === 'fatigue') fatigueScore = val;
+  }
+
+  function updateOil(idx, val) {
+    val = parseInt(val);
+    oilScores[idx] = val;
+    const scoreEl = document.getElementById('oilScore' + idx);
+    const itemEl  = document.getElementById('oilItem' + idx);
+    if (val === 0) {
+      scoreEl.textContent = '—';
+      scoreEl.className = 'oil-score zero';
+      itemEl.classList.remove('rated');
+    } else {
+      scoreEl.textContent = val;
+      scoreEl.className = 'oil-score';
+      itemEl.classList.add('rated');
+    }
+  }
+
+  // ── 職業「其他」顯示切換 ─────────────────────────────────
+  function toggleJobOther(val) {
+    const wrap = document.getElementById('jobOtherWrap');
+    wrap.classList.toggle('show', val === '其他');
+    if (val !== '其他') document.getElementById('inputJobOther').value = '';
+  }
+
+  // ── 取得職業值（含自填）────────────────────────────────
+  function getJobValue() {
+    const sel = document.getElementById('inputJob').value;
+    if (sel === '其他') {
+      const custom = document.getElementById('inputJobOther').value.trim();
+      return custom ? '其他：' + custom : '其他';
+    }
+    return sel;
+  }
+
+  // ── 困擾排名切換 ─────────────────────────────────────────
+  function toggleConcern(el, value) {
+    const idx = concernRanking.indexOf(value);
+    if (idx > -1) {
+      // 取消選取
+      concernRanking.splice(idx, 1);
+      el.classList.remove('selected');
+    } else {
+      if (concernRanking.length >= 3) return;
+      concernRanking.push(value);
+      el.classList.add('selected');
+    }
+    refreshConcernUI();
+  }
+
+  function refreshConcernUI() {
+    const chips = document.querySelectorAll('.concern-chip');
+    const maxed = concernRanking.length >= 3;
+
+    chips.forEach(chip => {
+      const val   = chip.getAttribute('onclick').match(/'([^']+)'\)/)[1];
+      const rank  = concernRanking.indexOf(val);
+      const badge = chip.querySelector('.concern-rank-badge');
+      chip.classList.toggle('maxed', maxed);
+      if (rank > -1) {
+        chip.classList.add('selected');
+        badge.textContent = rank + 1;
+      } else {
+        chip.classList.remove('selected');
+        badge.textContent = '—';
+      }
+    });
+
+    const preview = document.getElementById('concernPreview');
+    if (concernRanking.length === 0) {
+      preview.innerHTML = '尚未選擇';
+    } else {
+      preview.innerHTML = concernRanking.map((c, i) =>
+        `<span class="csp-item"><span class="csp-num">${i+1}</span>${c}</span>`
+      ).join('');
+    }
+  }
+
+  // ── 步驟切換 ──────────────────────────────────────────────
+  const STEPS = ['step1','step2','step3','step4'];
+  const PROGRESS = [33, 66, 90, 100];
+  const STEP_LABELS = ['步驟 1 / 3','步驟 2 / 3','步驟 3 / 3','完成'];
+
+  function goStep(n) {
+    if (n === 2 && !validateStep1()) return;
+
+    STEPS.forEach((id, i) => {
+      document.getElementById(id).classList.toggle('active', i === n - 1);
+    });
+    document.getElementById('progressBar').style.width = PROGRESS[n-1] + '%';
+    document.getElementById('stepIndicator').textContent = STEP_LABELS[n-1];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── 驗證 Step 1 ───────────────────────────────────────────
+  function validateStep1() {
+    let ok = true;
+    const name  = document.getElementById('inputName').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    document.getElementById('fieldName').classList.toggle('error', !name);
+    document.getElementById('errName').classList.toggle('show', !name);
+    document.getElementById('fieldEmail').classList.toggle('error', !email || !emailOk);
+    document.getElementById('errEmail').classList.toggle('show', !email || !emailOk);
+
+    if (!name || !email || !emailOk) ok = false;
+    return ok;
+  }
+
+  // ── 送出表單 ──────────────────────────────────────────────
+  function submitForm() {
+    const record = saveToStorage();
+    generateResult(record);
+    goStep(4);
+    sendEmailReport(record);
+  }
+
+  // ── 儲存（localStorage 備份 + 上傳 Google Sheets）────────
+  function saveToStorage() {
+    const record = {
+      ts:       Date.now(),
+      name:     document.getElementById('inputName').value.trim(),
+      email:    document.getElementById('inputEmail').value.trim(),
+      job:      getJobValue(),
+      age:      document.getElementById('inputAge').value,
+      stress:   stressScore,
+      fatigue:  fatigueScore,
+      concerns: [...concernRanking],
+      concern:  concernRanking[0] || '',
+      oils:     [...oilScores],
+    };
+
+    // ① localStorage 備份（離線也能保留）
+    try {
+      const existing = JSON.parse(localStorage.getItem('aromaRecords') || '[]');
+      existing.push(record);
+      localStorage.setItem('aromaRecords', JSON.stringify(existing));
+    } catch(e) { console.warn('localStorage 儲存失敗', e); }
+
+    // ② 上傳至 Google Sheets（no-cors：不阻擋頁面，靜默送出）
+    if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode:   'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:   JSON.stringify(record),
+      }).catch(e => console.warn('Google Sheets 上傳失敗', e));
+    }
+
+    return record;
+  }
+
+  // ── 寄送 Email（EmailJS）────────────────────────────────
+  function sendEmailReport(record) {
+    const statusEl = document.getElementById('emailStatus');
+    const footerEl = document.getElementById('footerEmailNote');
+
+    // 尚未設定 EmailJS → 顯示提示
+    if (EJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+      statusEl.className = 'email-status error';
+      statusEl.innerHTML = '<span class="email-status-icon">⚠️</span><div>Email 寄送功能尚未啟用。<br>請依照說明文件設定 EmailJS 帳號，即可自動寄送報告。</div>';
+      footerEl.textContent = '（Email 功能待設定）';
+      return;
+    }
+
+    emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+
+    // 準備精油排名文字
+    const topOils = oilScores
+      .map((s, i) => ({ name: OILS[i].name, score: s }))
+      .sort((a, b) => b.score - a.score).slice(0, 3).filter(o => o.score > 0)
+      .map((o, i) => `第${i+1}名：${o.name}（${o.score}分）`).join('、') || '（未評分）';
+
+    const concernText = record.concerns.length
+      ? record.concerns.map((c, i) => `第${i+1}名：${c}`).join('、')
+      : '（未填寫）';
+
+    const personality = detectPersonalityByOils();
+    const analysisPlain = buildAnalysisText(record.name).replace(/<[^>]*>/g, '');
+    const personalityPlain = personality.desc.replace(/<[^>]*>/g, '');
+
+    const templateParams = {
+      to_email:         record.email,
+      to_name:          record.name,
+      stress_score:     record.stress + ' / 10',
+      fatigue_score:    record.fatigue + ' / 10',
+      top_concerns:     concernText,
+      top_oils:         topOils,
+      personality_type: personality.type,
+      analysis_text:    analysisPlain,
+      personality_desc: personalityPlain,
+      coupon_code:      document.getElementById('couponCode').textContent,
+      job:              record.job || '—',
+      age:              record.age || '—',
+    };
+
+    emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, templateParams)
+      .then(() => {
+        statusEl.className = 'email-status success';
+        statusEl.innerHTML = `<span class="email-status-icon">✅</span><div>報告已成功寄送至 <strong>${record.email}</strong>，請查收收件匣（或垃圾郵件）。</div>`;
+        footerEl.textContent = '分析報告已寄送至您的 Email';
+      })
+      .catch(err => {
+        console.error('EmailJS 錯誤', err);
+        statusEl.className = 'email-status error';
+        statusEl.innerHTML = `<span class="email-status-icon">❌</span><div>寄送失敗，請稍後再試。<br><small style="color:inherit;opacity:.7">錯誤：${err.text || JSON.stringify(err)}</small></div>`;
+        footerEl.textContent = '（Email 寄送失敗）';
+      });
+  }
+
+  // ── 生成分析結果 ──────────────────────────────────────────
+  function generateResult(record) {
+    const name = record.name;
+
+    // 壓力 / 疲憊
+    document.getElementById('rsStressVal').textContent  = stressScore;
+    document.getElementById('rsFatigueVal').textContent = fatigueScore;
+    setTimeout(() => {
+      const sb = document.getElementById('rsStressBar');
+      const fb = document.getElementById('rsFatigueBar');
+      sb.style.width = (stressScore * 10) + '%';
+      fb.style.width = (fatigueScore * 10) + '%';
+      if (stressScore  >= 7) sb.classList.add('high');
+      else if (stressScore  >= 4) sb.classList.add('mid');
+      if (fatigueScore >= 7) fb.classList.add('high');
+      else if (fatigueScore >= 4) fb.classList.add('mid');
+    }, 100);
+
+    // 身心分析文字
+    document.getElementById('analysisText').innerHTML = buildAnalysisText(name);
+
+    // Top 3 精油
+    const sorted = oilScores
+      .map((score, i) => ({ score, ...OILS[i], idx: i }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .filter(o => o.score > 0);
+
+    const topWrap = document.getElementById('topOilsWrap');
+    if (sorted.length === 0) {
+      topWrap.innerHTML = '<p style="font-size:.83rem;color:var(--muted)">（尚未評分）</p>';
+    } else {
+      topWrap.innerHTML = sorted.map(o =>
+        `<div class="oil-tag"><span>${o.icon}</span>${o.name} <strong style="color:var(--accent)">${o.score}</strong></div>`
+      ).join('');
+    }
+
+    // 香氛人格
+    const personality = detectPersonalityByOils();
+    document.getElementById('resultAvatar').textContent = personality.avatar;
+    document.getElementById('resultName').textContent = name + ' 的分析報告';
+    document.getElementById('resultType').textContent = personality.type;
+    document.getElementById('personalityText').innerHTML = personality.desc;
+
+    // 困擾排名顯示
+    const concernSec = document.getElementById('concernResultSection');
+    const concernTxt = document.getElementById('concernResultText');
+    if (concernRanking.length > 0) {
+      concernSec.style.display = 'block';
+      concernTxt.innerHTML = concernRanking.map((c, i) => {
+        const medals = ['🥇','🥈','🥉'];
+        return `<div style="margin-bottom:6px">${medals[i]} <strong>第${i+1}困擾</strong>：${c}</div>`;
+      }).join('');
+    }
+
+    // 課程推薦
+    document.getElementById('recommendCards').innerHTML = buildRecommendCards(personality);
+
+    // 折價券碼（簡單個人化）
+    const code = 'AROMA-' + name.charAt(0).toUpperCase() + (stressScore + fatigueScore);
+    document.getElementById('couponCode').textContent = code;
+  }
+
+  // ── 身心分析文字 ──────────────────────────────────────────
+  function buildAnalysisText(name) {
+    const s = stressScore, f = fatigueScore;
+    let txt = `<strong>${name}</strong>，根據您今天的評估：<br><br>`;
+
+    if (s >= 8 && f >= 8) {
+      txt += '您目前處於<strong>高壓高耗能</strong>的狀態——壓力與疲憊同時達到高峰，這是身體在向您發出警訊。長期維持此狀態容易引發情緒崩潰、免疫力下降，甚至影響睡眠與人際關係。<br><br>您現在最需要的不是「撐過去」，而是給自己一個真正的出口與修復空間。';
+    } else if (s >= 7) {
+      txt += '您的<strong>壓力指數偏高</strong>，身體正在消耗大量能量來應對外在要求。即使您外表看起來運作正常，內在的緊繃感已在悄悄積累，容易影響決策品質與人際互動。<br><br>芳香療法中的放鬆型精油，能協助您的神經系統「切換到副交感模式」，讓壓力荷爾蒙恢復平衡。';
+    } else if (f >= 7) {
+      txt += '您的<strong>疲憊感較為明顯</strong>，精力儲備正在消耗中。這種疲憊不一定是睡眠不足造成的——許多時候是「精神性疲勞」，源於長期高度專注或情緒過度付出。<br><br>提振型精油能幫助活化神經系統，補充能量感，讓您在不依賴咖啡因的情況下恢復清明狀態。';
+    } else if (s <= 3 && f <= 3) {
+      txt += '您今天的<strong>身心狀態相當良好</strong>！壓力與疲憊指數都在理想範圍，您的能量儲備充足，正處於最佳狀態。<br><br>持續維護這份平衡，是預防職場倦怠的最佳策略。使用平衡型精油，能幫助您在忙碌中維持這份穩定感。';
+    } else {
+      txt += '您的身心狀態<strong>處於中等水位</strong>，整體而言還在可控範圍。但這個階段往往是最容易被忽視的——感覺還好，卻暗中積累疲憊。<br><br>定期的香氛自我照護，能讓您在壓力上升前就主動調節，避免累積到爆點。';
+    }
+    return txt;
+  }
+
+  // ── 偵測香氛人格（依目前 oilScores）────────────────────
+  function detectPersonalityByOils() {
+    const catCount = {};
+    OILS.forEach((o, i) => { catCount[o.cat] = (catCount[o.cat] || 0) + oilScores[i]; });
+    const dominant = Object.entries(catCount).sort((a,b) => b[1]-a[1])[0][0];
+    return PERSONALITIES[dominant] || PERSONALITIES.flower;
+  }
+  // 後台用（傳入陣列）
+  function detectPersonality(topOils) {
+    if (topOils.length === 0) return PERSONALITIES.flower;
+    const catCount = {};
+    topOils.forEach(o => { catCount[o.cat] = (catCount[o.cat] || 0) + o.score; });
+    const dominant = Object.entries(catCount).sort((a,b) => b[1]-a[1])[0][0];
+    return PERSONALITIES[dominant] || PERSONALITIES.flower;
+  }
+
+  // ── 課程推薦 ──────────────────────────────────────────────
+  function buildRecommendCards(personality) {
+    const cards = [];
+
+    if (stressScore >= 6 || fatigueScore >= 6) {
+      cards.push({
+        icon: '🧘', color: '#f0f7f3',
+        title: '芳療舒壓體驗工作坊',
+        desc: '透過精油調配與按摩手法，系統性釋放積累的壓力與疲憊。適合高壓族群的入門首選。NT$200 折扣券可用。'
+      });
+    }
+
+    cards.push({
+      icon: '🌿', color: '#faf5e8',
+      title: '一日調香師體驗課',
+      desc: '學習精油調配原則，親手打造屬於自己的香氛配方。帶回一支個人客製精油（100ml）。NT$200 折扣券可用。'
+    });
+
+    if (personality.type.includes('深根') || personality.type.includes('清明')) {
+      cards.push({
+        icon: '🎨', color: '#f0f0f7',
+        title: '芳療藝術治療課程',
+        desc: '結合精油香氛與藝術創作，探索深層情緒與內在資源。適合需要深度自我覺察的您。'
+      });
+    } else {
+      cards.push({
+        icon: '📚', color: '#f0f0f7',
+        title: '芳療師認證初階課程',
+        desc: '系統學習精油知識、安全使用與配方設計，取得國際認可的芳療初階認證。'
+      });
+    }
+
+    return cards.map(c => `
+      <div class="rec-card">
+        <div class="rec-icon" style="background:${c.color}">${c.icon}</div>
+        <div>
+          <h4>${c.title}</h4>
+          <p>${c.desc}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── 分享功能 ──────────────────────────────────────────────
+  function shareLine() {
+    const text = encodeURIComponent('我剛完成了香氛覺察評估，快來看看你的精油人格類型！');
+    window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(location.href) + '&text=' + text, '_blank');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(location.href).then(() => {
+      const btn = document.querySelector('.btn-share-copy');
+      btn.textContent = '✅ 已複製';
+      setTimeout(() => { btn.textContent = '🔗 複製連結'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

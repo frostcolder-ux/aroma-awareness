@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>香氛覺察 — 數據分析後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark:    #0a2218;
+      --primary: #1a5c3a;
+      --mid:     #2d7a52;
+      --accent:  #52c989;
+      --gold:    #e8c56a;
+      --red:     #e85252;
+      --bg:      #f4f6f5;
+      --bg2:     #eef3f0;
+      --text:    #1c1c1e;
+      --muted:   #5c6e63;
+      --border:  #dde8e2;
+      --white:   #ffffff;
+      --sidebar: 240px;
+    }
+    html { -webkit-font-smoothing: antialiased; }
+    body { font-family: "Noto Sans TC", system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar); background: var(--dark); position: fixed;
+      top: 0; left: 0; bottom: 0; overflow-y: auto; z-index: 100;
+      display: flex; flex-direction: column;
+    }
+    .sb-logo {
+      padding: 24px 20px 18px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: .92rem; font-weight: 800; color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .sb-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+    .sb-sub { font-size: .68rem; color: rgba(255,255,255,.35); letter-spacing: .06em; padding: 18px 20px 10px; text-transform: uppercase; }
+    .sb-nav { list-style: none; padding: 0 10px; }
+    .sb-nav li a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      text-decoration: none; font-size: .83rem; font-weight: 500;
+      color: rgba(255,255,255,.5); transition: all .18s; margin-bottom: 2px;
+    }
+    .sb-nav li a:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .sb-nav li a.active { background: rgba(82,201,137,.15); color: var(--accent); font-weight: 700; }
+    .sb-nav li a .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sb-footer {
+      margin-top: auto; padding: 16px 20px;
+      font-size: .7rem; color: rgba(255,255,255,.25);
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar); flex: 1; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: .97rem; font-weight: 800; color: var(--dark); }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .badge-live {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(82,201,137,.12); border: 1px solid rgba(82,201,137,.3);
+      border-radius: 99px; padding: 4px 12px;
+      font-size: .72rem; font-weight: 700; color: var(--mid);
+    }
+    .live-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 1.4s infinite; }
+    @keyframes blink { 0%,100%{ opacity:1 } 50%{ opacity:.3 } }
+    .btn-export {
+      background: var(--dark); color: #fff;
+      padding: 7px 18px; border-radius: 8px;
+      font-family: inherit; font-size: .78rem; font-weight: 700;
+      border: none; cursor: pointer; transition: background .2s;
+    }
+    .btn-export:hover { background: var(--primary); }
+    .btn-refresh {
+      background: transparent; color: var(--muted);
+      padding: 7px 14px; border-radius: 8px;
+      font-family: inherit; font-size: .78rem; font-weight: 600;
+      border: 1.5px solid var(--border); cursor: pointer; transition: all .2s;
+    }
+    .btn-refresh:hover { border-color: var(--accent); color: var(--primary); }
+    .btn-demo {
+      background: var(--accent); color: var(--dark);
+      padding: 7px 18px; border-radius: 8px;
+      font-family: inherit; font-size: .78rem; font-weight: 700;
+      border: none; cursor: pointer; transition: background .2s;
+    }
+    .btn-demo:hover { background: #6edda0; }
+
+    /* ── CONTENT ── */
+    .content { padding: 28px 32px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 18px;
+      box-shadow: 0 2px 8px rgba(10,34,24,.05);
+    }
+    .kpi-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .kpi-val { font-size: 2rem; font-weight: 900; color: var(--dark); line-height: 1; letter-spacing: -.04em; }
+    .kpi-val span { font-size: .85rem; font-weight: 400; color: var(--muted); }
+    .kpi-label { font-size: .74rem; color: var(--muted); margin-top: 6px; }
+    .kpi-trend { font-size: .72rem; margin-top: 4px; }
+    .up   { color: var(--accent); } .down { color: var(--red); }
+
+    /* ── CHART GRID ── */
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .chart-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(10,34,24,.05);
+    }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-title { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+    .chart-sub   { font-size: .72rem; color: var(--muted); margin-bottom: 18px; }
+    .chart-wrap  { position: relative; }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(10,34,24,.05); margin-bottom: 24px;
+    }
+    .table-header {
+      padding: 18px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-header h3 { font-size: .88rem; font-weight: 800; color: var(--dark); }
+    .table-header span { font-size: .73rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--bg); text-align: left;
+      padding: 10px 16px; font-size: .72rem; font-weight: 700;
+      color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:hover { background: var(--bg); }
+    tbody td {
+      padding: 12px 16px; font-size: .8rem; color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    .pill {
+      display: inline-block; border-radius: 99px; padding: 2px 10px;
+      font-size: .7rem; font-weight: 700;
+    }
+    .pill-green { background: rgba(82,201,137,.15); color: var(--mid); }
+    .pill-gold  { background: rgba(232,197,106,.2);  color: #9a7c2a; }
+    .pill-red   { background: rgba(232,82,82,.12);   color: #c04444; }
+
+    /* ── CORRELATION ── */
+    .corr-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .corr-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 14px;
+    }
+    .corr-card h4 { font-size: .78rem; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+    .corr-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .corr-name { font-size: .7rem; color: var(--muted); min-width: 56px; }
+    .corr-bar-wrap { flex: 1; background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+    .corr-bar { height: 6px; border-radius: 99px; background: var(--accent); }
+    .corr-val { font-size: .7rem; font-weight: 700; color: var(--primary); min-width: 22px; text-align: right; }
+
+    /* ── PERSONALITY ── */
+    .pers-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
+    .pers-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 12px; text-align: center;
+    }
+    .pers-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .pers-type { font-size: .7rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .pers-count { font-size: 1.5rem; font-weight: 900; color: var(--dark); }
+    .pers-pct  { font-size: .68rem; color: var(--muted); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--muted);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
+    .empty-state p { font-size: .82rem; }
+
+    /* ── STRESS/FATIGUE indicator ── */
+    .score-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 6px;
+      font-weight: 700; font-size: .78rem;
+    }
+    .score-high { background: rgba(232,82,82,.12); color: #c04444; }
+    .score-mid  { background: rgba(232,197,106,.2); color: #9a7c2a; }
+    .score-low  { background: rgba(82,201,137,.15); color: var(--mid); }
+
+    @media (max-width: 1200px) {
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .pers-grid { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sb-logo span, .sb-sub, .sb-nav li a span, .sb-footer { display: none; }
+      .sb-nav li a { justify-content: center; }
+      .main { margin-left: 60px; }
+      .chart-grid { grid-template-columns: 1fr; }
+      .corr-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-dot"></div>
+    <span>香氛後台</span>
+  </div>
+  <div class="sb-sub">分析中心</div>
+  <ul class="sb-nav">
+    <li><a href="#" class="active" data-page="overview" onclick="showPage('overview',this)">
+      <span class="nav-icon">📊</span><span>總覽儀表板</span>
+    </a></li>
+    <li><a href="#" data-page="oils" onclick="showPage('oils',this)">
+      <span class="nav-icon">🌿</span><span>精油喜好分析</span>
+    </a></li>
+    <li><a href="#" data-page="stress" onclick="showPage('stress',this)">
+      <span class="nav-icon">📈</span><span>壓力 × 精油關聯</span>
+    </a></li>
+    <li><a href="#" data-page="records" onclick="showPage('records',this)">
+      <span class="nav-icon">📋</span><span>所有填答記錄</span>
+    </a></li>
+  </ul>
+  <div class="sb-footer">prototype v0.1</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pageTitle">總覽儀表板</div>
+    <div class="topbar-right">
+      <div class="badge-live"><div class="live-dot"></div>即時數據</div>
+      <button class="btn-refresh" onclick="loadRecords()" title="從 Google Sheets 重新載入">🔄 重新整理</button>
+      <button class="btn-demo" onclick="loadDemoData()">載入示範資料</button>
+      <button class="btn-export" onclick="exportCSV()">匯出 CSV</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════ PAGE: 總覽 ══════════════════ -->
+    <div class="page active" id="page-overview">
+
+      <!-- KPI -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-val" id="kpiTotal">0</div>
+          <div class="kpi-label">總填答人數</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">😤</div>
+          <div class="kpi-val" id="kpiStress">—</div>
+          <div class="kpi-label">平均壓力指數</div>
+          <div class="kpi-trend" id="kpiStressTrend"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">😴</div>
+          <div class="kpi-val" id="kpiFatigue">—</div>
+          <div class="kpi-label">平均疲憊指數</div>
+          <div class="kpi-trend" id="kpiFatigueTrend"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🌿</div>
+          <div class="kpi-val" id="kpiTopOil">—</div>
+          <div class="kpi-label">最受歡迎精油</div>
+        </div>
+      </div>
+
+      <!-- 香氛人格分布 -->
+      <div class="chart-card" style="margin-bottom:16px;">
+        <div class="chart-title">香氛人格類型分布</div>
+        <div class="chart-sub">依填答者主導精油類別分類</div>
+        <div class="pers-grid" id="persGrid">
+          <div style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">📊</div><h3>尚無數據</h3><p>請先在覺察表填答，或點擊「載入示範資料」</p></div></div>
+        </div>
+      </div>
+
+      <!-- 壓力分布 + 職業分布 -->
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-title">壓力指數分布</div>
+          <div class="chart-sub">各分數段人數統計</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="chartStressDist"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">疲憊指數分布</div>
+          <div class="chart-sub">各分數段人數統計</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="chartFatigueDist"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">職業類別分布</div>
+          <div class="chart-sub">填答者職業組成</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="chartJob"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">年齡區間分布</div>
+          <div class="chart-sub">填答者年齡組成</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="chartAge"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PAGE: 精油分析 ══════════════════ -->
+    <div class="page" id="page-oils">
+      <div class="chart-card full" style="margin-bottom:16px;">
+        <div class="chart-title">12 支精油平均喜好度排行</div>
+        <div class="chart-sub">所有填答者評分平均值（1–10 分）</div>
+        <div class="chart-wrap" style="height:320px">
+          <canvas id="chartOilRank"></canvas>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-title">精油香調類別偏好</div>
+          <div class="chart-sub">花香 / 柑橘 / 草本 / 木質 / 清新</div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="chartCatPie"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Top 5 精油雷達圖</div>
+          <div class="chart-sub">前五名精油的整體評分輪廓</div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="chartRadar"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PAGE: 關聯分析 ══════════════════ -->
+    <div class="page" id="page-stress">
+      <div class="chart-card full" style="margin-bottom:16px;">
+        <div class="chart-title">高壓族群（壓力 ≥ 7）偏好精油</div>
+        <div class="chart-sub">壓力指數 7–10 的填答者，各精油平均評分</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chartHighStressOils"></canvas>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="chart-card">
+          <div class="chart-title">壓力 vs 疲憊散佈圖</div>
+          <div class="chart-sub">每位填答者的壓力與疲憊關係</div>
+          <div class="chart-wrap" style="height:260px">
+            <canvas id="chartScatter"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">各困擾主題 × 精油偏好關聯</div>
+        <div class="chart-sub">不同困擾族群的前三精油偏好（平均分）</div>
+        <div class="corr-grid" id="corrGrid">
+          <div style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">🔍</div><h3>尚無足夠數據</h3><p>需要至少 5 筆填答資料才能呈現關聯分析</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ PAGE: 所有記錄 ══════════════════ -->
+    <div class="page" id="page-records">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>填答記錄明細</h3>
+          <span id="recordCount">共 0 筆</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>姓名</th>
+                <th>填答時間</th>
+                <th>職業</th>
+                <th>年齡</th>
+                <th>壓力</th>
+                <th>疲憊</th>
+                <th>困擾</th>
+                <th>香氛人格</th>
+                <th>Top 精油</th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody">
+              <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">尚無填答記錄</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  const OILS = [
+    { name:'薰衣草', cat:'flower' }, { name:'玫瑰',   cat:'flower' }, { name:'依蘭依蘭',cat:'flower' },
+    { name:'甜橙',   cat:'citrus' }, { name:'佛手柑', cat:'citrus' },
+    { name:'薄荷',   cat:'herb'   }, { name:'迷迭香', cat:'herb'   }, { name:'茶樹',   cat:'herb'   },
+    { name:'雪松',   cat:'wood'   }, { name:'乳香',   cat:'wood'   }, { name:'廣藿香', cat:'wood'   },
+    { name:'尤加利', cat:'fresh'  },
+  ];
+  const CAT_LABEL = { flower:'花香', citrus:'柑橘', herb:'草本', wood:'木質', fresh:'清新' };
+  const PERS_MAP = {
+    flower:{ type:'浪漫滋養型', icon:'🌹' },
+    citrus:{ type:'活力陽光型', icon:'🍊' },
+    herb:  { type:'清晰理性型', icon:'🌿' },
+    wood:  { type:'深根沉穩型', icon:'🪵' },
+    fresh: { type:'自由清明型', icon:'🌬️' },
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // ⚙️  Google Apps Script URL（與 awareness-form.html 相同）
+  //     設定後，後台可讀取所有學員填答資料
+  // ══════════════════════════════════════════════════════════
+  const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+  // ══════════════════════════════════════════════════════════
+
+  let records = [];
+  let charts  = {};
+  let isLoading = false;
+
+  // ── 讀取資料（優先 Google Sheets，備援 localStorage）────────
+  function loadRecords() {
+    if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
+      setLoadingState(true);
+      fetch(APPS_SCRIPT_URL + '?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+          records = Array.isArray(data) ? data : [];
+          // 同步寫回 localStorage 做本機備份
+          try { localStorage.setItem('aromaRecords', JSON.stringify(records)); } catch(e) {}
+          setLoadingState(false);
+          refreshAll();
+        })
+        .catch(err => {
+          console.warn('Google Sheets 讀取失敗，改用 localStorage', err);
+          loadFromLocal();
+        });
+    } else {
+      loadFromLocal();
+    }
+  }
+
+  function loadFromLocal() {
+    try {
+      records = JSON.parse(localStorage.getItem('aromaRecords') || '[]');
+    } catch(e) { records = []; }
+    setLoadingState(false);
+    refreshAll();
+  }
+
+  function setLoadingState(loading) {
+    isLoading = loading;
+    const title = document.getElementById('pageTitle');
+    if (title) title.textContent = loading ? '⏳ 載入中…' : document.querySelector('.sb-nav a.active')?.querySelector('span:last-child')?.textContent || '總覽儀表板';
+  }
+
+  // ── 頁面切換 ──────────────────────────────────────────────
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sb-nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    el.classList.add('active');
+    const titles = { overview:'總覽儀表板', oils:'精油喜好分析', stress:'壓力 × 精油關聯', records:'所有填答記錄' };
+    document.getElementById('pageTitle').textContent = titles[id];
+    refreshAll();
+    return false;
+  }
+
+  // ── 全部更新 ──────────────────────────────────────────────
+  function refreshAll() {
+    updateKPI();
+    updatePersonality();
+    renderDistChart('chartStressDist', records.map(r => r.stress),  '壓力', 'rgba(232,82,82,.7)');
+    renderDistChart('chartFatigueDist', records.map(r => r.fatigue),'疲憊', 'rgba(232,197,106,.8)');
+    renderCategoryChart('chartJob', records.map(r => r.job || '未填'), '職業', 0);
+    renderCategoryChart('chartAge', records.map(r => r.age || '未填'), '年齡', 1);
+    renderOilRank();
+    renderCatPie();
+    renderRadar();
+    renderHighStress();
+    renderScatter();
+    renderCorrGrid();
+    renderRecordsTable();
+  }
+
+  // ── KPI ──────────────────────────────────────────────────
+  function updateKPI() {
+    document.getElementById('kpiTotal').textContent = records.length;
+    if (records.length === 0) {
+      document.getElementById('kpiStress').innerHTML  = '—';
+      document.getElementById('kpiFatigue').innerHTML = '—';
+      document.getElementById('kpiTopOil').innerHTML  = '—';
+      return;
+    }
+    const avgS = avg(records.map(r => r.stress));
+    const avgF = avg(records.map(r => r.fatigue));
+    document.getElementById('kpiStress').innerHTML  = avgS.toFixed(1) + '<span> / 10</span>';
+    document.getElementById('kpiFatigue').innerHTML = avgF.toFixed(1) + '<span> / 10</span>';
+    document.getElementById('kpiStressTrend').innerHTML  = levelBadge(avgS);
+    document.getElementById('kpiFatigueTrend').innerHTML = levelBadge(avgF);
+
+    const oilAvgs = OILS.map((o,i) => ({ name: o.name, avg: avg(records.map(r => r.oils[i] || 0)) }));
+    const top = oilAvgs.sort((a,b) => b.avg - a.avg)[0];
+    document.getElementById('kpiTopOil').textContent = top.name;
+  }
+
+  function levelBadge(v) {
+    if (v >= 7) return '<span class="up" style="color:#e85252">⬆ 偏高</span>';
+    if (v >= 4) return '<span style="color:var(--gold)">➡ 中等</span>';
+    return '<span class="up">⬇ 良好</span>';
+  }
+
+  // ── 香氛人格 ──────────────────────────────────────────────
+  function updatePersonality() {
+    const grid = document.getElementById('persGrid');
+    if (records.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">📊</div><h3>尚無數據</h3><p>請先在覺察表填答，或點擊「載入示範資料」</p></div></div>';
+      return;
+    }
+    const cnt = {};
+    records.forEach(r => {
+      const p = detectPersonality(r.oils);
+      cnt[p] = (cnt[p] || 0) + 1;
+    });
+    grid.innerHTML = Object.entries(PERS_MAP).map(([cat, p]) => {
+      const c = cnt[cat] || 0;
+      const pct = records.length ? Math.round(c / records.length * 100) : 0;
+      return `<div class="pers-card">
+        <div class="pers-icon">${p.icon}</div>
+        <div class="pers-type">${p.type}</div>
+        <div class="pers-count">${c}</div>
+        <div class="pers-pct">${pct}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  function detectPersonality(oils) {
+    const catScore = { flower:0, citrus:0, herb:0, wood:0, fresh:0 };
+    OILS.forEach((o,i) => { catScore[o.cat] += oils[i] || 0; });
+    return Object.entries(catScore).sort((a,b) => b[1]-a[1])[0][0];
+  }
+
+  // ── 分布直方圖 ────────────────────────────────────────────
+  function renderDistChart(id, values, label, color) {
+    const buckets = new Array(10).fill(0);
+    values.forEach(v => { if (v >= 1 && v <= 10) buckets[v-1]++; });
+    renderBar(id, Array.from({length:10},(_,i)=>i+1+'分'), buckets, label+'人數', color);
+  }
+
+  // ── 類別圖 ───────────────────────────────────────────────
+  function renderCategoryChart(id, values, label, colorIdx) {
+    const cnt = {};
+    values.forEach(v => { cnt[v] = (cnt[v]||0)+1; });
+    const sorted = Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+    const colors = [
+      'rgba(82,201,137,.75)', 'rgba(232,197,106,.8)', 'rgba(82,130,201,.75)',
+      'rgba(201,82,82,.7)', 'rgba(150,82,201,.7)', 'rgba(82,180,201,.7)',
+      'rgba(201,140,82,.7)', 'rgba(130,201,82,.7)',
+    ];
+    renderDoughnut(id, sorted.map(e=>e[0]), sorted.map(e=>e[1]),
+      sorted.map((_,i)=>colors[i % colors.length]));
+  }
+
+  // ── 精油排行橫條圖 ────────────────────────────────────────
+  function renderOilRank() {
+    if (records.length === 0) { destroyChart('chartOilRank'); return; }
+    const avgs = OILS.map((o,i) => avg(records.map(r => r.oils[i] || 0)));
+    const sorted = OILS.map((o,i) => ({ name:o.name, avg:avgs[i], cat:o.cat }))
+                       .sort((a,b) => b.avg - a.avg);
+    const catColors = { flower:'rgba(201,82,130,.7)', citrus:'rgba(232,197,106,.8)', herb:'rgba(82,201,137,.75)', wood:'rgba(150,100,50,.7)', fresh:'rgba(82,180,201,.75)' };
+    renderHBar('chartOilRank', sorted.map(o=>o.name), sorted.map(o=>+o.avg.toFixed(2)), sorted.map(o=>catColors[o.cat]));
+  }
+
+  // ── 類別圓餅 ─────────────────────────────────────────────
+  function renderCatPie() {
+    if (records.length === 0) { destroyChart('chartCatPie'); return; }
+    const catAvg = { flower:0, citrus:0, herb:0, wood:0, fresh:0 };
+    const catCnt = { flower:0, citrus:0, herb:0, wood:0, fresh:0 };
+    OILS.forEach((o,i) => {
+      const s = avg(records.map(r => r.oils[i] || 0));
+      catAvg[o.cat] += s; catCnt[o.cat]++;
+    });
+    const cats = Object.keys(catAvg);
+    const vals = cats.map(c => +(catAvg[c]/catCnt[c]).toFixed(2));
+    renderDoughnut('chartCatPie', cats.map(c=>CAT_LABEL[c]), vals,
+      ['rgba(201,82,130,.75)','rgba(232,197,106,.8)','rgba(82,201,137,.75)','rgba(150,100,50,.7)','rgba(82,180,201,.75)']);
+  }
+
+  // ── 雷達圖 ───────────────────────────────────────────────
+  function renderRadar() {
+    if (records.length === 0) { destroyChart('chartRadar'); return; }
+    const avgs = OILS.map((o,i) => avg(records.map(r => r.oils[i] || 0)));
+    const sorted = OILS.map((o,i)=>({name:o.name,avg:avgs[i]})).sort((a,b)=>b.avg-a.avg).slice(0,5);
+    destroyChart('chartRadar');
+    const ctx = document.getElementById('chartRadar');
+    if (!ctx) return;
+    charts['chartRadar'] = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: sorted.map(o=>o.name),
+        datasets: [{ label:'平均喜好度', data: sorted.map(o=>o.avg.toFixed(2)),
+          backgroundColor:'rgba(82,201,137,.2)', borderColor:'rgba(82,201,137,.8)',
+          pointBackgroundColor:'rgba(82,201,137,1)', borderWidth:2 }]
+      },
+      options: { responsive:true, maintainAspectRatio:false,
+        scales:{ r:{ min:0, max:10, ticks:{ stepSize:2, font:{size:10} }, pointLabels:{ font:{size:11} } } },
+        plugins:{ legend:{ display:false } } }
+    });
+  }
+
+  // ── 高壓精油偏好 ──────────────────────────────────────────
+  function renderHighStress() {
+    const hi = records.filter(r => r.stress >= 7);
+    if (hi.length === 0) { destroyChart('chartHighStressOils'); return; }
+    const avgs = OILS.map((o,i) => avg(hi.map(r => r.oils[i] || 0)));
+    const sorted = OILS.map((o,i)=>({name:o.name,avg:avgs[i]})).sort((a,b)=>b.avg-a.avg);
+    renderHBar('chartHighStressOils', sorted.map(o=>o.name), sorted.map(o=>+o.avg.toFixed(2)),
+      'rgba(232,82,82,.65)');
+  }
+
+  // ── 散佈圖 ───────────────────────────────────────────────
+  function renderScatter() {
+    destroyChart('chartScatter');
+    if (records.length === 0) return;
+    const ctx = document.getElementById('chartScatter');
+    if (!ctx) return;
+    charts['chartScatter'] = new Chart(ctx, {
+      type: 'scatter',
+      data: { datasets: [{ label:'壓力 vs 疲憊', data: records.map(r=>({x:r.stress,y:r.fatigue})),
+        backgroundColor:'rgba(82,201,137,.55)', borderColor:'rgba(82,201,137,.9)',
+        pointRadius:6, pointHoverRadius:8 }] },
+      options: { responsive:true, maintainAspectRatio:false,
+        scales: {
+          x: { min:1, max:10, title:{ display:true, text:'壓力指數', font:{size:11} } },
+          y: { min:1, max:10, title:{ display:true, text:'疲憊指數', font:{size:11} } }
+        },
+        plugins:{ legend:{ display:false } } }
+    });
+  }
+
+  // ── 困擾關聯 ─────────────────────────────────────────────
+  function renderCorrGrid() {
+    const grid = document.getElementById('corrGrid');
+    if (records.length < 3) {
+      grid.innerHTML = '<div style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">🔍</div><h3>尚無足夠數據</h3><p>需要至少 5 筆填答資料才能呈現關聯分析</p></div></div>';
+      return;
+    }
+    const concerns = {};
+    records.forEach(r => {
+      if (!r.concern) return;
+      if (!concerns[r.concern]) concerns[r.concern] = [];
+      concerns[r.concern].push(r.oils);
+    });
+    const entries = Object.entries(concerns).filter(e=>e[1].length>=1).slice(0,6);
+    if (entries.length === 0) { grid.innerHTML = grid.innerHTML; return; }
+    grid.innerHTML = entries.map(([concern, oilsList]) => {
+      const avgs = OILS.map((o,i) => avg(oilsList.map(oils=>oils[i]||0)));
+      const top3 = OILS.map((o,i)=>({name:o.name,avg:avgs[i]})).sort((a,b)=>b.avg-a.avg).slice(0,3);
+      const maxAvg = top3[0]?.avg || 1;
+      return `<div class="corr-card">
+        <h4>${concern}</h4>
+        ${top3.map(o=>`
+          <div class="corr-bar-row">
+            <div class="corr-name">${o.name}</div>
+            <div class="corr-bar-wrap"><div class="corr-bar" style="width:${(o.avg/maxAvg*100).toFixed(0)}%"></div></div>
+            <div class="corr-val">${o.avg.toFixed(1)}</div>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+  }
+
+  // ── 記錄表 ───────────────────────────────────────────────
+  function renderRecordsTable() {
+    document.getElementById('recordCount').textContent = '共 ' + records.length + ' 筆';
+    const tbody = document.getElementById('recordsBody');
+    if (records.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">尚無填答記錄</td></tr>';
+      return;
+    }
+    tbody.innerHTML = [...records].reverse().map((r,i) => {
+      const pers = detectPersonality(r.oils);
+      const pm = PERS_MAP[pers];
+      const topOil = OILS.map((o,idx)=>({name:o.name,s:r.oils[idx]||0})).sort((a,b)=>b.s-a.s)[0];
+      const sClass = r.stress>=7?'score-high':r.stress>=4?'score-mid':'score-low';
+      const fClass = r.fatigue>=7?'score-high':r.fatigue>=4?'score-mid':'score-low';
+      return `<tr>
+        <td>${records.length - i}</td>
+        <td><strong>${r.name}</strong></td>
+        <td>${new Date(r.ts).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
+        <td>${r.job||'—'}</td>
+        <td>${r.age||'—'}</td>
+        <td><span class="score-pill ${sClass}">${r.stress}</span></td>
+        <td><span class="score-pill ${fClass}">${r.fatigue}</span></td>
+        <td>${r.concern||'—'}</td>
+        <td>${pm.icon} ${pm.type}</td>
+        <td>${topOil.name} (${topOil.s})</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── 示範資料 ──────────────────────────────────────────────
+  function loadDemoData() {
+    const names = ['王小明','林美華','張志豪','陳淑芬','李佳穎','黃建國','許雅婷','吳宗翰','劉靜怡','蔡明哲','鄭雅雯','周士傑','林淑惠','楊俊賢','謝美玲'];
+    const jobs  = ['上班族／辦公室工作','管理／主管職','教育工作者','醫療／社福工作者','服務業','自由工作者','學生'];
+    const ages  = ['21–30 歲','31–40 歲','41–50 歲','51–60 歲'];
+    const concerns = ['工作壓力太大','睡眠品質不佳','情緒起伏難以控制','身體疲勞/痠痛','人際關係困擾','缺乏生活動力'];
+    const demo = names.map((name,i) => ({
+      name, ts: Date.now() - i * 180000,
+      email: name + '@example.com',
+      job: jobs[i % jobs.length],
+      age: ages[i % ages.length],
+      stress:  Math.floor(Math.random()*7)+3,
+      fatigue: Math.floor(Math.random()*7)+3,
+      concern: concerns[i % concerns.length],
+      oils: Array.from({length:12},()=> Math.floor(Math.random()*9)+1),
+    }));
+    localStorage.setItem('aromaRecords', JSON.stringify(demo));
+    loadRecords();
+    alert('✅ 已載入 ' + demo.length + ' 筆示範資料！');
+  }
+
+  // ── 匯出 CSV ──────────────────────────────────────────────
+  function exportCSV() {
+    if (records.length === 0) { alert('目前沒有資料可匯出'); return; }
+    const oilHeaders = OILS.map(o=>o.name).join(',');
+    const header = '姓名,填答時間,Email,職業,年齡,壓力,疲憊,困擾,' + oilHeaders + ',香氛人格\n';
+    const rows = records.map(r => {
+      const pers = PERS_MAP[detectPersonality(r.oils)]?.type || '';
+      return [r.name, new Date(r.ts).toLocaleString('zh-TW'), r.email||'', r.job||'', r.age||'',
+              r.stress, r.fatigue, r.concern||'', ...r.oils, pers].join(',');
+    }).join('\n');
+    const blob = new Blob(['\uFEFF'+header+rows], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = '香氛覺察數據_' + new Date().toLocaleDateString('zh-TW').replace(/\//g,'-') + '.csv';
+    a.click();
+  }
+
+  // ── Chart helpers ─────────────────────────────────────────
+  function destroyChart(id) {
+    if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  }
+
+  function renderBar(id, labels, data, label, color) {
+    destroyChart(id);
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    charts[id] = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets:[{ label, data, backgroundColor: color, borderRadius:6 }] },
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ x:{ grid:{display:false}, ticks:{font:{size:10}} }, y:{ beginAtZero:true, ticks:{stepSize:1,font:{size:10}} } } }
+    });
+  }
+
+  function renderHBar(id, labels, data, color) {
+    destroyChart(id);
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    const colors = Array.isArray(color) ? color : labels.map(() => color);
+    charts[id] = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets:[{ data, backgroundColor:colors, borderRadius:5 }] },
+      options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ x:{ min:0, max:10, grid:{display:false}, ticks:{font:{size:10}} }, y:{ ticks:{font:{size:10}} } } }
+    });
+  }
+
+  function renderDoughnut(id, labels, data, colors) {
+    destroyChart(id);
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    charts[id] = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets:[{ data, backgroundColor:colors, borderWidth:1, borderColor:'#fff' }] },
+      options: { responsive:true, maintainAspectRatio:false, cutout:'58%',
+        plugins:{ legend:{ position:'right', labels:{ font:{size:10}, padding:10 } } } }
+    });
+  }
+
+  function avg(arr) {
+    if (!arr.length) return 0;
+    return arr.reduce((a,b)=>a+b,0)/arr.length;
+  }
+
+  // ── 監聽 localStorage 變動（同裝置備援）─────────────────
+  window.addEventListener('storage', e => {
+    if (e.key === 'aromaRecords') loadRecords();
+  });
+
+  // ── 初始化 ────────────────────────────────────────────────
+  loadRecords();
+</script>
+</body>
+</html>
