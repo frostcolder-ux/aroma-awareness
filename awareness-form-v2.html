@@ -1199,7 +1199,7 @@ function submitForm() {
 
   // Upload to Google Sheets
   if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
-    fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(record) }).catch(()=>{});
+    fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(record) }).catch(()=>{});
   }
 
   goScene(12);
