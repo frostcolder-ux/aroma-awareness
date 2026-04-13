@@ -336,7 +336,27 @@
     #s8  { background: linear-gradient(150deg, #fff5f8 0%, #f8e8ee 100%); }
     #s9  { background: linear-gradient(150deg, #fffef8 0%, #f5f2e8 100%); }
     #s10 { background: linear-gradient(150deg, #f0faf4 0%, #e0f0e8 100%); }
-    #s11 { background: linear-gradient(150deg, #f8f8f8 0%, #f0f3f0 100%); overflow-y: auto; }
+    #s12 { background: linear-gradient(150deg, #f8f8f8 0%, #f0f3f0 100%); overflow-y: auto; }
+
+    /* ── OIL SELECTION GRID ── */
+    .oil-sel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-bottom: 16px; }
+    .oil-sel-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; border-radius: 14px;
+      border: 1.5px solid var(--border); background: var(--white);
+      cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--text);
+      transition: all .18s; user-select: none; -webkit-user-select: none;
+    }
+    .oil-sel-chip .osc-emoji { font-size: 1.2rem; flex-shrink: 0; }
+    .oil-sel-chip .osc-name { line-height: 1.3; }
+    .oil-sel-chip .osc-en   { font-size: .62rem; color: var(--muted); }
+    .oil-sel-chip:hover { border-color: rgba(82,201,137,.5); background: #f0faf5; }
+    .oil-sel-chip.selected { border-color: var(--accent); background: rgba(82,201,137,.1); }
+    .oil-sel-chip.selected .osc-name { color: var(--green); }
+    .oil-sel-hint {
+      text-align: center; font-size: .78rem; font-weight: 700; color: var(--accent);
+      padding: 8px 0 4px; letter-spacing: .05em;
+    }
 
     /* scene-0 welcome */
     .welcome-inner { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 28px 32px; }
@@ -560,7 +580,7 @@
     <!-- S9: Fragrance Wheel -->
     <div class="scene" id="s9">
       <div class="scene-inner">
-        <div class="q-step">香氛探索 — 1 / 2</div>
+        <div class="q-step">香氛探索 — 1 / 3</div>
         <h2 class="q-title">您直覺偏好<br>哪種香調？</h2>
         <p class="q-sub">點選香調輪中的色塊，可複選最多三種。</p>
         <div class="wheel-wrap">
@@ -571,11 +591,22 @@
       </div>
     </div>
 
-    <!-- S10: Oil Rating Carousel -->
-    <div class="scene" id="s10" style="display:flex;flex-direction:column;">
+    <!-- S10: Oil Selection -->
+    <div class="scene" id="s10">
+      <div class="scene-inner" style="overflow-y:auto">
+        <div class="q-step">香氛探索 — 2 / 3</div>
+        <h2 class="q-title">今天聞了<br>哪些精油？</h2>
+        <p class="q-sub">請勾選您今天實際聞過的精油，<br>接著為它們評分。</p>
+        <div class="oil-sel-hint" id="oilSelHint">已選 0 支</div>
+        <div class="oil-sel-grid" id="oilSelGrid"></div>
+      </div>
+    </div>
+
+    <!-- S11: Oil Rating Carousel -->
+    <div class="scene" id="s11" style="display:flex;flex-direction:column;">
       <div style="padding:50px 24px 8px">
-        <div class="q-step" id="oilStepLabel">香氛探索 — 2 / 2</div>
-        <h2 class="q-title" style="font-size:1.4rem">12 支精油，您的評分？</h2>
+        <div class="q-step" id="oilStepLabel">香氛探索 — 3 / 3</div>
+        <h2 class="q-title" style="font-size:1.4rem" id="oilRateTitle">精油喜好評分</h2>
         <p style="font-size:.8rem;color:var(--muted)">聞過後依直覺給分。左右滑動換油。</p>
       </div>
       <div class="oil-carousel" id="oilCarousel">
@@ -588,8 +619,8 @@
       </div>
     </div>
 
-    <!-- S11: Result -->
-    <div class="scene" id="s11">
+    <!-- S12: Result -->
+    <div class="scene" id="s12">
       <div class="scene-inner" style="padding-top:24px">
 
         <!-- Email status -->
@@ -690,18 +721,23 @@ const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
 
 // ── 精油資料 ─────────────────────────────────────────
 const OILS = [
-  { name:'薰衣草', en:'Lavender',     icon:'🌿', cat:'flower', kw:['舒壓','助眠','舒緩焦慮'] },
-  { name:'玫瑰',   en:'Rose',          icon:'🌹', cat:'flower', kw:['情感滋養','幸福感'] },
-  { name:'依蘭',   en:'Ylang Ylang',   icon:'🌺', cat:'flower', kw:['感性','自信','放鬆'] },
-  { name:'甜橙',   en:'Sweet Orange',  icon:'🍊', cat:'citrus', kw:['開朗','提振情緒','陽光'] },
-  { name:'佛手柑', en:'Bergamot',      icon:'🫐', cat:'citrus', kw:['抗焦慮','平衡','柑橘'] },
-  { name:'薄荷',   en:'Peppermint',    icon:'🌱', cat:'herb',   kw:['提神醒腦','清涼','專注'] },
-  { name:'迷迭香', en:'Rosemary',      icon:'🌿', cat:'herb',   kw:['記憶力','活力','清晰'] },
-  { name:'茶樹',   en:'Tea Tree',      icon:'🌲', cat:'herb',   kw:['淨化','清新','抗菌'] },
-  { name:'雪松',   en:'Cedarwood',     icon:'🌲', cat:'wood',   kw:['穩定','接地','深層放鬆'] },
-  { name:'乳香',   en:'Frankincense',  icon:'🧿', cat:'wood',   kw:['靈性','冥想','深呼吸'] },
-  { name:'廣藿香', en:'Patchouli',     icon:'🌏', cat:'wood',   kw:['大地感','安全感','感官'] },
-  { name:'尤加利', en:'Eucalyptus',    icon:'🌬️', cat:'fresh',  kw:['清明','呼吸道','解放'] },
+  { name:'真正薰衣草', en:'True Lavender',   icon:'💜', cat:'flower', kw:['深層放鬆','安神','助眠'] },
+  { name:'玫瑰',       en:'Rose',             icon:'🌹', cat:'flower', kw:['情感滋養','幸福感'] },
+  { name:'依蘭',       en:'Ylang Ylang',      icon:'🌺', cat:'flower', kw:['感性','自信','放鬆'] },
+  { name:'芳香萬壽菊', en:'Tagetes',          icon:'🌼', cat:'flower', kw:['溫暖','舒緩','獨特'] },
+  { name:'甜橙',       en:'Sweet Orange',     icon:'🍊', cat:'citrus', kw:['開朗','提振情緒','陽光'] },
+  { name:'佛手柑',     en:'Bergamot',         icon:'🍋', cat:'citrus', kw:['抗焦慮','平衡','柑橘'] },
+  { name:'萊姆',       en:'Lime',             icon:'🟢', cat:'citrus', kw:['清新','提振','活潑'] },
+  { name:'桔子',       en:'Mandarin',         icon:'🍊', cat:'citrus', kw:['溫暖','甜美','放鬆'] },
+  { name:'胡椒薄荷',   en:'Peppermint',       icon:'🌱', cat:'herb',   kw:['提神醒腦','清涼','專注'] },
+  { name:'迷迭香',     en:'Rosemary',         icon:'🌿', cat:'herb',   kw:['記憶力','活力','清晰'] },
+  { name:'茶樹',       en:'Tea Tree',         icon:'🌲', cat:'herb',   kw:['淨化','清新','抗菌'] },
+  { name:'羅勒',       en:'Basil',            icon:'🌿', cat:'herb',   kw:['專注','活化','消除疲勞'] },
+  { name:'雪松',       en:'Cedarwood',        icon:'🌲', cat:'wood',   kw:['穩定','接地','深層放鬆'] },
+  { name:'乳香',       en:'Frankincense',     icon:'🧿', cat:'wood',   kw:['靈性','冥想','深呼吸'] },
+  { name:'廣藿香',     en:'Patchouli',        icon:'🌏', cat:'wood',   kw:['大地感','安全感','感官'] },
+  { name:'尤加利',     en:'Eucalyptus',       icon:'🌬️', cat:'fresh',  kw:['清明','呼吸道','解放'] },
+  { name:'檸檬香茅',   en:'Lemongrass',       icon:'🌾', cat:'fresh',  kw:['清新','提神','除臭'] },
 ];
 
 const WHEEL_CATS = [
@@ -723,7 +759,7 @@ const PERSONALITIES = {
 // ── 狀態 ─────────────────────────────────────────────
 let currentScene   = 0;
 let currentOilIdx  = 0;
-const totalScenes  = 12; // 0-11
+const totalScenes  = 13; // 0-12
 
 const state = {
   name: '', email: '', age: '', job: '', jobCustom: '',
@@ -731,12 +767,13 @@ const state = {
   stress: 5, fatigue: 5,
   concerns: [],
   preferredCats: [],
-  oils: new Array(12).fill(0),
+  selectedOils: [], // indices into OILS that participant chose to rate
+  oils: new Array(17).fill(0),
 };
 
 // ── SCENE NAVIGATION ─────────────────────────────────
-const PROGRESS_MAP = [0,8,16,24,32,40,50,60,70,80,90,100];
-const COUNTER_MAP  = ['','1 / 10','2 / 10','3 / 10','4 / 10','5 / 10','6 / 10','7 / 10','8 / 10','9 / 10','10 / 10',''];
+const PROGRESS_MAP = [0,7,14,21,28,35,44,54,64,74,82,90,100];
+const COUNTER_MAP  = ['','1 / 11','2 / 11','3 / 11','4 / 11','5 / 11','6 / 11','7 / 11','8 / 11','9 / 11','10 / 11','11 / 11',''];
 
 function goScene(n) {
   if (n < 0 || n >= totalScenes) return;
@@ -754,7 +791,9 @@ function goScene(n) {
 
 function handleNext() {
   if (!validateScene(currentScene)) return;
-  if (currentScene === 10) { submitForm(); return; }
+  if (currentScene === 11) { submitForm(); return; }
+  if (currentScene === 9)  { buildOilSelectGrid(); } // re-sort by preferred cats
+  if (currentScene === 10) { buildOilCards(); }
   goScene(currentScene + 1);
 }
 
@@ -766,20 +805,20 @@ function updateUI() {
   const label   = COUNTER_MAP[n];
   counter.textContent = label;
   counter.style.display = label ? 'block' : 'none';
-  counter.className = 'counter' + ([0,11].includes(n) ? '' : ' dark-text');
+  counter.className = 'counter' + ([0,12].includes(n) ? '' : ' dark-text');
 
   const navBar = document.getElementById('navBar');
   const btnBack = document.getElementById('btnBack');
   const btnNext = document.getElementById('btnNext');
 
-  if (n === 0 || n === 11) {
+  if (n === 0 || n === 12) {
     navBar.style.display = 'none';
   } else {
     navBar.style.display = 'flex';
     navBar.className = 'nav-bar';
     btnBack.style.display = n === 1 ? 'none' : 'flex';
-    btnNext.textContent = n === 10 ? '產生我的報告 ✦' : '繼續 →';
-    btnNext.className   = 'btn-nav btn-next' + (n === 10 ? ' accent' : '');
+    btnNext.textContent = n === 11 ? '產生我的報告 ✦' : '繼續 →';
+    btnNext.className   = 'btn-nav btn-next' + (n === 11 ? ' accent' : '');
   }
 }
 
@@ -972,25 +1011,72 @@ function refreshWheelTags() {
   }
 }
 
+// ── OIL SELECTION ────────────────────────────────────
+function buildOilSelectGrid() {
+  const grid = document.getElementById('oilSelGrid');
+  grid.innerHTML = '';
+  // Sort preferred cats first
+  const sorted = [...OILS.map((o,i) => ({...o, idx:i}))].sort((a,b) => {
+    const aP = state.preferredCats.includes(a.cat);
+    const bP = state.preferredCats.includes(b.cat);
+    return bP - aP;
+  });
+  sorted.forEach(oil => {
+    const chip = document.createElement('div');
+    chip.className = 'oil-sel-chip' + (state.selectedOils.includes(oil.idx) ? ' selected' : '');
+    chip.dataset.oilIdx = oil.idx;
+    chip.innerHTML = `<span class="osc-emoji">${oil.icon}</span><div><div class="osc-name">${oil.name}</div><div class="osc-en">${oil.en}</div></div>`;
+    chip.addEventListener('click', () => toggleOilSelect(oil.idx, chip));
+    grid.appendChild(chip);
+  });
+  refreshOilSelHint();
+}
+
+function toggleOilSelect(idx, el) {
+  const pos = state.selectedOils.indexOf(idx);
+  if (pos > -1) {
+    state.selectedOils.splice(pos, 1);
+    el.classList.remove('selected');
+  } else {
+    state.selectedOils.push(idx);
+    el.classList.add('selected');
+  }
+  refreshOilSelHint();
+}
+
+function refreshOilSelHint() {
+  const n = state.selectedOils.length;
+  document.getElementById('oilSelHint').textContent = n === 0 ? '尚未選擇（至少選 1 支）' : `已選 ${n} 支精油`;
+}
+
 // ── OIL CAROUSEL ─────────────────────────────────────
 function buildOilCards() {
   const track = document.getElementById('oilTrack');
   const dots  = document.getElementById('oilDots');
   track.innerHTML = ''; dots.innerHTML = '';
+  currentOilIdx = 0;
+
+  // Use selected oils; if none selected, fall back to all
+  const pool = state.selectedOils.length > 0
+    ? state.selectedOils.map(i => ({...OILS[i], idx:i}))
+    : [...OILS.map((o,i) => ({...o, idx:i}))];
 
   // Sort: preferred cats first
-  const sortedOils = [...OILS.map((o,i) => ({...o, idx:i}))].sort((a,b) => {
+  const sortedOils = [...pool].sort((a,b) => {
     const aP = state.preferredCats.includes(a.cat);
     const bP = state.preferredCats.includes(b.cat);
     return bP - aP;
   });
+
+  const total = sortedOils.length;
+  document.getElementById('oilRateTitle').textContent = `${total} 支精油，您的評分？`;
 
   sortedOils.forEach((oil, i) => {
     const card = document.createElement('div');
     card.className = 'oil-card';
     card.innerHTML = `
       <div class="oil-card-inner">
-        <div class="oc-num">${i+1} / 12</div>
+        <div class="oc-num">${i+1} / ${total}</div>
         <span class="oc-emoji">${oil.icon}</span>
         <div class="oc-name">${oil.name}</div>
         <div class="oc-en">${oil.en}</div>
@@ -1010,7 +1096,7 @@ function buildOilCards() {
   });
 
   // Restore any existing scores
-  sortedOils.forEach((oil, i) => {
+  sortedOils.forEach(oil => {
     const score = state.oils[oil.idx];
     if (score > 0) highlightOilBtn(oil.idx, score);
   });
@@ -1041,8 +1127,9 @@ function rateOil(oilIdx, val, btn) {
   state.oils[oilIdx] = val;
   highlightOilBtn(oilIdx, val);
   // Auto-advance after 300ms
+  const total = document.getElementById('oilTrack').children.length;
   setTimeout(() => {
-    if (currentOilIdx < OILS.length - 1) goOil(1);
+    if (currentOilIdx < total - 1) goOil(1);
   }, 300);
 }
 
@@ -1070,6 +1157,7 @@ function submitForm() {
     concerns: [...state.concerns],
     concern:  state.concerns[0] || '',
     preferredCats: [...state.preferredCats],
+    selectedOils: state.selectedOils.map(i => OILS[i].name),
     oils:     [...state.oils],
   };
 
@@ -1084,7 +1172,7 @@ function submitForm() {
     fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(record) }).catch(()=>{});
   }
 
-  goScene(11);
+  goScene(12);
   generateResult(record);
   sendEmail(record);
 }
@@ -1118,8 +1206,8 @@ function generateResult(rec) {
       `<div style="margin-bottom:5px">${medals[i]} <strong>第${i+1}困擾</strong>：${c}</div>`).join('');
   }
 
-  // Top oils
-  const topOils = rec.oils.map((s,i)=>({...OILS[i],s,i})).sort((a,b)=>b.s-a.s).slice(0,3).filter(o=>o.s>0);
+  // Top oils (only from rated/selected oils)
+  const topOils = rec.oils.map((s,i)=>({...OILS[i],s,i})).filter(o=>o.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
   document.getElementById('rTopOils').innerHTML = topOils.length
     ? topOils.map(o=>`<div class="top-oil-tag"><span>${o.icon}</span>${o.name} <strong style="color:var(--accent)">${o.s}</strong></div>`).join('')
     : '<span style="font-size:.83rem;color:var(--muted)">（尚未評分）</span>';
@@ -1130,7 +1218,7 @@ function generateResult(rec) {
 
 function getPersonality() {
   const catScore = { flower:0, citrus:0, herb:0, wood:0, fresh:0 };
-  OILS.forEach((o,i) => { catScore[o.cat] += state.oils[i]; });
+  OILS.forEach((o,i) => { if (state.oils[i] > 0) catScore[o.cat] += state.oils[i]; });
   // Boost preferred cats
   state.preferredCats.forEach(k => { catScore[k] += 5; });
   const dominant = Object.entries(catScore).sort((a,b)=>b[1]-a[1])[0][0];
@@ -1179,7 +1267,7 @@ function sendEmail(rec) {
   }
 
   emailjs.init({ publicKey: EJS_PUBLIC_KEY });
-  const topOils = rec.oils.map((s,i)=>({...OILS[i],s})).sort((a,b)=>b.s-a.s).slice(0,3).filter(o=>o.s>0)
+  const topOils = rec.oils.map((s,i)=>({...OILS[i],s})).filter(o=>o.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
     .map((o,i)=>`第${i+1}名：${o.name}（${o.s}分）`).join('、') || '（未評分）';
 
   emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
@@ -1216,7 +1304,7 @@ function copyLink() {
 
 // ── INIT ──────────────────────────────────────────────
 buildWheel();
-buildOilCards();
+buildOilSelectGrid();
 updateUI();
 </script>
 </body>
