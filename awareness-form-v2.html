@@ -242,6 +242,17 @@
     .oc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all .2s; }
     .oc-dot.active { background: var(--accent); width: 18px; border-radius: 99px; }
 
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(8px);
+      background: rgba(20,20,20,.88); color: #fff;
+      padding: 10px 22px; border-radius: 99px;
+      font-size: .83rem; font-weight: 700;
+      opacity: 0; transition: opacity .22s, transform .22s;
+      pointer-events: none; z-index: 9999; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     /* ── RESULT PAGE ── */
     .result-hero {
       background: var(--dark); border-radius: 22px;
@@ -560,7 +571,7 @@
       <div class="scene-inner">
         <div class="q-step">身心狀態 — 延伸</div>
         <h2 class="q-title">最近最困擾您的是？</h2>
-        <p class="q-sub">依困擾程度依序點選，最多三項。</p>
+        <p class="q-sub">依困擾程度依序點選，最多三項（必填）。</p>
         <div class="chip-grid">
           <div class="concern-chip" onclick="toggleConcern(this,'工作壓力太大')"><span class="chip-rank">—</span>工作壓力太大</div>
           <div class="concern-chip" onclick="toggleConcern(this,'睡眠品質不佳')"><span class="chip-rank">—</span>睡眠品質不佳</div>
@@ -572,7 +583,7 @@
           <div class="concern-chip" onclick="toggleConcern(this,'專注記憶力下降')"><span class="chip-rank">—</span>專注記憶力下降</div>
         </div>
         <div class="concern-preview" id="concernPreview" style="margin-top:8px">
-          <span style="color:var(--muted);font-size:.78rem">尚未選擇（可跳過）</span>
+          <span style="color:#e85252;font-size:.78rem">⚠ 請至少選擇 1 項</span>
         </div>
       </div>
     </div>
@@ -582,11 +593,11 @@
       <div class="scene-inner">
         <div class="q-step">香氛探索 — 1 / 3</div>
         <h2 class="q-title">您直覺偏好<br>哪種香調？</h2>
-        <p class="q-sub">點選香調輪中的色塊，可複選最多三種。</p>
+        <p class="q-sub">點選香調輪中的色塊，至少選一種（必填）。</p>
         <div class="wheel-wrap">
           <div id="wheelContainer"></div>
           <div class="wheel-hint">已選擇：</div>
-          <div class="wheel-selected-tags" id="wheelTags"><span style="font-size:.75rem;color:var(--muted)">尚未選擇（可跳過）</span></div>
+          <div class="wheel-selected-tags" id="wheelTags"><span style="font-size:.75rem;color:#e85252">⚠ 請至少點選 1 種</span></div>
         </div>
       </div>
     </div>
@@ -818,15 +829,38 @@ function updateUI() {
   }
 }
 
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
 // ── VALIDATION ────────────────────────────────────────
 function validateScene(n) {
   if (n === 1) {
-    const name  = document.getElementById('inputName').value.trim();
-    const email = document.getElementById('inputEmail').value.trim();
+    const name    = document.getElementById('inputName').value.trim();
+    const email   = document.getElementById('inputEmail').value.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     document.getElementById('errName').className  = 'err-msg' + (name ? '' : ' show');
     document.getElementById('errEmail').className = 'err-msg' + (email && emailOk ? '' : ' show');
-    return !!(name && email && emailOk);
+    if (!name)              { showToast('請填寫您的姓名'); return false; }
+    if (!email || !emailOk) { showToast('請填寫正確的 Email'); return false; }
+    return true;
+  }
+  if (n === 2 && !state.age)         { showToast('請選擇您的年齡範圍'); return false; }
+  if (n === 3 && !state.job)         { showToast('請選擇您的職業類別'); return false; }
+  if (n === 4 && !state.residence)   { showToast('請選擇您的居住地區'); return false; }
+  if (n === 5 && !state.environment) { showToast('請選擇您的工作環境'); return false; }
+  if (n === 8 && state.concerns.length === 0)     { showToast('請至少選擇 1 項困擾'); return false; }
+  if (n === 9 && state.preferredCats.length === 0) { showToast('請至少點選 1 種香調'); return false; }
+  if (n === 10 && state.selectedOils.length === 0) { showToast('請至少勾選 1 支精油'); return false; }
+  if (n === 11) {
+    const unrated = state.selectedOils.find(i => state.oils[i] === 0);
+    if (unrated !== undefined) { showToast(`請為「${OILS[unrated].name}」評分`); return false; }
   }
   return true;
 }
@@ -895,7 +929,7 @@ function refreshConcernUI() {
   });
   const prev = document.getElementById('concernPreview');
   if (!state.concerns.length) {
-    prev.innerHTML = '<span style="color:var(--muted);font-size:.78rem">尚未選擇（可跳過）</span>';
+    prev.innerHTML = '<span style="color:#e85252;font-size:.78rem">⚠ 請至少選擇 1 項</span>';
   } else {
     prev.innerHTML = state.concerns.map((c,i) =>
       `<span class="cp-item"><span class="cp-num">${i+1}</span>${c}</span>`).join('');
@@ -998,7 +1032,7 @@ function toggleWheelCat(key, pathEl) {
 function refreshWheelTags() {
   const wrap = document.getElementById('wheelTags');
   if (!state.preferredCats.length) {
-    wrap.innerHTML = '<span style="font-size:.75rem;color:var(--muted)">尚未選擇（可跳過）</span>';
+    wrap.innerHTML = '<span style="font-size:.75rem;color:#e85252">⚠ 請至少點選 1 種</span>';
   } else {
     wrap.innerHTML = state.preferredCats.map(k => {
       const c = WHEEL_CATS.find(w => w.key === k);
@@ -1251,38 +1285,21 @@ function buildRec(pers) {
 }
 
 // ── EMAIL ─────────────────────────────────────────────
+// 報告 Email 由 Google Apps Script doPost 端負責寄送（MailApp）
 function sendEmail(rec) {
   const statusEl = document.getElementById('emailStatus');
   const footerEl = document.getElementById('footerNote');
 
-  if (EJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-    statusEl.className = 'email-status error';
-    statusEl.innerHTML = '⚠️ Email 功能尚未啟用。請設定 EmailJS 帳號後即可自動寄送報告。';
-    footerEl.textContent = '（Email 功能待設定）';
-    return;
-  }
-
-  emailjs.init({ publicKey: EJS_PUBLIC_KEY });
-  const topOils = rec.oils.map((s,i)=>({...OILS[i],s})).filter(o=>o.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
-    .map((o,i)=>`第${i+1}名：${o.name}（${o.s}分）`).join('、') || '（未評分）';
-
-  emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-    to_email: rec.email, to_name: rec.name,
-    stress_score: rec.stress + ' / 10', fatigue_score: rec.fatigue + ' / 10',
-    top_concerns: rec.concerns.map((c,i)=>`第${i+1}：${c}`).join('、') || '（未填）',
-    top_oils: topOils,
-    personality_type: getPersonality().type,
-    analysis_text: buildAnalysis(rec).replace(/<[^>]*>/g,''),
-    coupon_code: document.getElementById('rCoupon').textContent,
-  }).then(() => {
+  if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
+    // Apps Script 收到 POST 後會自動寄 Email，這裡直接顯示成功訊息
     statusEl.className = 'email-status success';
-    statusEl.innerHTML = `✅ 報告已寄送至 <strong>${rec.email}</strong>，請查收收件匣。`;
+    statusEl.innerHTML = `✅ 報告已寄送至 <strong>${rec.email}</strong>，請查收收件匣（約 1–2 分鐘）。`;
     footerEl.textContent = '分析報告已寄送至您的 Email';
-  }).catch(err => {
+  } else {
     statusEl.className = 'email-status error';
-    statusEl.innerHTML = `❌ 寄送失敗（${err.text || '請稍後再試'}）`;
-    footerEl.textContent = '（Email 寄送失敗）';
-  });
+    statusEl.innerHTML = '⚠️ Email 功能尚未啟用，請在設定區填入 Google Apps Script URL。';
+    footerEl.textContent = '（Email 功能待設定）';
+  }
 }
 
 // ── SHARE ─────────────────────────────────────────────
