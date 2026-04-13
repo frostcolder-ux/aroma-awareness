@@ -1202,17 +1202,9 @@ function submitForm() {
     const gasUrl = APPS_SCRIPT_URL
                  + '?action=save&data='
                  + encodeURIComponent(JSON.stringify(record));
-    console.log('[GAS] 送出請求：', gasUrl.substring(0, 120) + '...');
-    fetch(gasUrl)
-      .then(r => r.text())
-      .then(result => {
-        console.log('[GAS] 回應：', result);
-        showToast('✅ 資料已送出');
-      })
-      .catch(err => {
-        console.error('[GAS] 錯誤：', err);
-        showToast('⚠️ 資料送出失敗：' + err.message);
-      });
+    fetch(gasUrl, { mode: 'no-cors' })
+      .then(() => console.log('[GAS] 請求已送出'))
+      .catch(err => console.error('[GAS] 錯誤：', err));
   }
 
   goScene(12);
