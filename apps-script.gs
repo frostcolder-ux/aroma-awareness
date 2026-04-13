@@ -22,7 +22,11 @@ const OIL_NAMES = [
 // ── 接收表單送出（POST）────────────────────────────────────
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
+    // 支援 URLSearchParams（e.parameter.data）和純 JSON body 兩種格式
+    const rawJson = (e.parameter && e.parameter.data)
+                 || (e.postData  && e.postData.contents)
+                 || '{}';
+    const data = JSON.parse(rawJson);
     const ss   = SpreadsheetApp.getActiveSpreadsheet();
     let sheet  = ss.getSheetByName(SHEET_NAME);
 
@@ -80,8 +84,24 @@ function doPost(e) {
   }
 }
 
+// ── 測試用（在編輯器直接執行這個函式，確認 Email 可正常寄出）──
+function testEmail() {
+  sendResultEmail({
+    name:         '測試姓名',
+    email:        Session.getActiveUser().getEmail(), // 寄給自己
+    stress:       7,
+    fatigue:      6,
+    oils:         [8,0,0, 9,7,0,0, 5,0,0, 6,0,4],
+    concerns:     ['睡眠品質差','工作壓力大','情緒起伏'],
+    preferredCats:['citrus','flower'],
+    selectedOils: ['甜橙','佛手柑','依蘭'],
+  });
+  Logger.log('測試 Email 已寄出，請查收信箱');
+}
+
 // ── 寄送報告 Email ────────────────────────────────────────
 function sendResultEmail(data) {
+  if (!data) { console.error('sendResultEmail: 未傳入資料'); return; }
   try {
     const name    = data.name    || '您';
     const email   = data.email;
