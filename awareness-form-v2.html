@@ -1197,32 +1197,15 @@ function submitForm() {
     ex.push(record); localStorage.setItem('aromaRecords', JSON.stringify(ex));
   } catch(e) {}
 
-  // Upload to Google Sheets（用 hidden iframe form POST，最可靠的跨域送法）
+  // Upload to Google Sheets（GET 圖片像素法 — 最可靠，不受 CORS / redirect 影響）
   if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
     try {
-      const iframeName = 'gas_' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.cssText = 'display:none;position:fixed;top:-999px;left:-999px';
-      document.body.appendChild(iframe);
-
-      const form = document.createElement('form');
-      form.method  = 'POST';
-      form.action  = APPS_SCRIPT_URL;
-      form.target  = iframeName;
-      form.style.display = 'none';
-
-      const input = document.createElement('input');
-      input.type  = 'hidden';
-      input.name  = 'data';
-      input.value = JSON.stringify(record);
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-
-      setTimeout(() => {
-        try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e) {}
-      }, 8000);
+      const img = document.createElement('img');
+      img.style.cssText = 'display:none;position:fixed';
+      img.src = APPS_SCRIPT_URL
+              + '?action=save&data='
+              + encodeURIComponent(JSON.stringify(record));
+      document.body.appendChild(img);
     } catch(e) {}
   }
 
