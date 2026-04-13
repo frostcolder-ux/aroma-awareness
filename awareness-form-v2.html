@@ -721,23 +721,19 @@ const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
 
 // ── 精油資料 ─────────────────────────────────────────
 const OILS = [
-  { name:'真正薰衣草', en:'True Lavender',   icon:'💜', cat:'flower', kw:['深層放鬆','安神','助眠'] },
-  { name:'玫瑰',       en:'Rose',             icon:'🌹', cat:'flower', kw:['情感滋養','幸福感'] },
-  { name:'依蘭',       en:'Ylang Ylang',      icon:'🌺', cat:'flower', kw:['感性','自信','放鬆'] },
-  { name:'芳香萬壽菊', en:'Tagetes',          icon:'🌼', cat:'flower', kw:['溫暖','舒緩','獨特'] },
-  { name:'甜橙',       en:'Sweet Orange',     icon:'🍊', cat:'citrus', kw:['開朗','提振情緒','陽光'] },
-  { name:'佛手柑',     en:'Bergamot',         icon:'🍋', cat:'citrus', kw:['抗焦慮','平衡','柑橘'] },
-  { name:'萊姆',       en:'Lime',             icon:'🟢', cat:'citrus', kw:['清新','提振','活潑'] },
-  { name:'桔子',       en:'Mandarin',         icon:'🍊', cat:'citrus', kw:['溫暖','甜美','放鬆'] },
-  { name:'胡椒薄荷',   en:'Peppermint',       icon:'🌱', cat:'herb',   kw:['提神醒腦','清涼','專注'] },
-  { name:'迷迭香',     en:'Rosemary',         icon:'🌿', cat:'herb',   kw:['記憶力','活力','清晰'] },
-  { name:'茶樹',       en:'Tea Tree',         icon:'🌲', cat:'herb',   kw:['淨化','清新','抗菌'] },
-  { name:'羅勒',       en:'Basil',            icon:'🌿', cat:'herb',   kw:['專注','活化','消除疲勞'] },
-  { name:'雪松',       en:'Cedarwood',        icon:'🌲', cat:'wood',   kw:['穩定','接地','深層放鬆'] },
-  { name:'乳香',       en:'Frankincense',     icon:'🧿', cat:'wood',   kw:['靈性','冥想','深呼吸'] },
-  { name:'廣藿香',     en:'Patchouli',        icon:'🌏', cat:'wood',   kw:['大地感','安全感','感官'] },
-  { name:'尤加利',     en:'Eucalyptus',       icon:'🌬️', cat:'fresh',  kw:['清明','呼吸道','解放'] },
-  { name:'檸檬香茅',   en:'Lemongrass',       icon:'🌾', cat:'fresh',  kw:['清新','提神','除臭'] },
+  { name:'依蘭',       en:'Ylang Ylang',   icon:'🌺', cat:'flower', kw:['感性','自信','放鬆'] },
+  { name:'真正薰衣草', en:'True Lavender', icon:'💜', cat:'flower', kw:['深層放鬆','安神','助眠'] },
+  { name:'芳香萬壽菊', en:'Tagetes',       icon:'🌼', cat:'flower', kw:['溫暖','舒緩','獨特'] },
+  { name:'甜橙',       en:'Sweet Orange',  icon:'🍊', cat:'citrus', kw:['開朗','提振情緒','陽光'] },
+  { name:'佛手柑',     en:'Bergamot',      icon:'🍋', cat:'citrus', kw:['抗焦慮','平衡','柑橘'] },
+  { name:'萊姆',       en:'Lime',          icon:'🟢', cat:'citrus', kw:['清新','提振','活潑'] },
+  { name:'桔子',       en:'Mandarin',      icon:'🍊', cat:'citrus', kw:['溫暖','甜美','放鬆'] },
+  { name:'胡椒薄荷',   en:'Peppermint',    icon:'🌱', cat:'herb',   kw:['提神醒腦','清涼','專注'] },
+  { name:'迷迭香',     en:'Rosemary',      icon:'🌿', cat:'herb',   kw:['記憶力','活力','清晰'] },
+  { name:'羅勒',       en:'Basil',         icon:'🌿', cat:'herb',   kw:['專注','活化','消除疲勞'] },
+  { name:'雪松',       en:'Cedarwood',     icon:'🌲', cat:'wood',   kw:['穩定','接地','深層放鬆'] },
+  { name:'廣藿香',     en:'Patchouli',     icon:'🌏', cat:'wood',   kw:['大地感','安全感','感官'] },
+  { name:'檸檬香茅',   en:'Lemongrass',    icon:'🌾', cat:'fresh',  kw:['清新','提神','除臭'] },
 ];
 
 const WHEEL_CATS = [
@@ -768,7 +764,7 @@ const state = {
   concerns: [],
   preferredCats: [],
   selectedOils: [], // indices into OILS that participant chose to rate
-  oils: new Array(17).fill(0),
+  oils: new Array(13).fill(0),
 };
 
 // ── SCENE NAVIGATION ─────────────────────────────────
