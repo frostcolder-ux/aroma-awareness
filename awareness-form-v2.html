@@ -1197,11 +1197,33 @@ function submitForm() {
     ex.push(record); localStorage.setItem('aromaRecords', JSON.stringify(ex));
   } catch(e) {}
 
-  // Upload to Google Sheets
+  // Upload to Google Sheets（用 hidden iframe form POST，最可靠的跨域送法）
   if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
-    const params = new URLSearchParams();
-    params.append('data', JSON.stringify(record));
-    fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', body: params }).catch(()=>{});
+    try {
+      const iframeName = 'gas_' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.cssText = 'display:none;position:fixed;top:-999px;left:-999px';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method  = 'POST';
+      form.action  = APPS_SCRIPT_URL;
+      form.target  = iframeName;
+      form.style.display = 'none';
+
+      const input = document.createElement('input');
+      input.type  = 'hidden';
+      input.name  = 'data';
+      input.value = JSON.stringify(record);
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+
+      setTimeout(() => {
+        try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e) {}
+      }, 8000);
+    } catch(e) {}
   }
 
   goScene(12);
