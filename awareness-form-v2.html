@@ -449,24 +449,19 @@
       border-radius: 99px; padding: 4px 11px;
       font-size: .65rem; color: var(--accent); letter-spacing: .04em;
     }
-    /* Brand story collapse */
+    /* Brand story */
     .wl-story {
       margin-top: 20px;
       border: 1px solid rgba(255,255,255,.1); border-radius: 14px; overflow: hidden;
     }
-    .wl-story > summary {
-      padding: 11px 16px; font-size: .78rem;
-      color: rgba(255,255,255,.4); cursor: pointer; list-style: none;
-      display: flex; justify-content: space-between; align-items: center;
-      user-select: none;
+    .wl-story-label {
+      padding: 11px 16px; font-size: .78rem; font-weight: 700;
+      color: rgba(255,255,255,.55); letter-spacing: .06em;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .wl-story > summary::-webkit-details-marker { display: none; }
-    .wl-story[open] > summary .wl-arrow { transform: rotate(180deg); }
-    .wl-arrow { transition: transform .2s; display: inline-block; }
     .wl-story-body {
-      padding: 0 16px 16px; font-size: .78rem;
+      padding: 12px 16px 16px; font-size: .78rem;
       color: rgba(255,255,255,.45); line-height: 1.95;
-      border-top: 1px solid rgba(255,255,255,.06);
     }
     .wl-story-body strong { color: rgba(255,255,255,.65); }
     .wl-story-body em { font-style: italic; color: rgba(255,255,255,.3); }
@@ -538,15 +533,11 @@
         </div>
         <button class="btn-start" onclick="goScene(1)">開始體驗 →</button>
 
-        <!-- ── 品牌故事收合區 ── -->
-        <details class="wl-story">
-          <summary>
-            <span>了解 WELLINA 精神</span>
-            <span class="wl-arrow">▾</span>
-          </summary>
+        <!-- ── 品牌故事 ── -->
+        <div class="wl-story">
+          <div class="wl-story-label">🌱 WELLINA 精神</div>
           <div class="wl-story-body">
             <div class="wl-story-section">
-              <strong>🌱 WELLINA精神</strong><br>
               <strong>以心為本</strong>｜回到人的本質，重視感受與連結<br>
               <strong>由愛出發</strong>｜讓每一個行動，都帶著療癒的初衷<br>
               <strong>共好共生</strong>｜與土地、社會、產業建立永續關係
@@ -562,7 +553,7 @@
               <em>讓香氣，不只是商品，<br>而是一種可以被感受、被傳遞、被延續的「愛的循環」。</em>
             </div>
           </div>
-        </details>
+        </div>
 
       </div>
     </div>
