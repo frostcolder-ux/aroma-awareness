@@ -12,6 +12,26 @@ const OIL_NAMES = [
   '澳洲尤加利','羅文沙葉','檸檬香茅'
 ];
 
+// ── 取得或建立試算表 ────────────────────────────────────────
+function getSpreadsheet() {
+  const props = PropertiesService.getScriptProperties();
+  let ssId = props.getProperty('SHEET_ID');
+  if (ssId) {
+    try { return SpreadsheetApp.openById(ssId); } catch(e) { ssId = null; }
+  }
+  const ss = SpreadsheetApp.create('香氛覺察表資料庫');
+  props.setProperty('SHEET_ID', ss.getId());
+  Logger.log('建立新試算表：' + ss.getUrl());
+  return ss;
+}
+
+// ── 一次性設定（第一次請在編輯器執行此函式）─────────────────
+function setup() {
+  const ss = getSpreadsheet();
+  Logger.log('試算表網址：' + ss.getUrl());
+  Logger.log('試算表 ID：' + ss.getId());
+}
+
 // ── 測試函式（編輯器選此函式執行）────────────────────────────
 function testEmail() {
   sendResultEmail({
@@ -19,7 +39,7 @@ function testEmail() {
     email:        Session.getActiveUser().getEmail(),
     stress:       7,
     fatigue:      6,
-    oils:         [8,0,0,9,7,0,0,5,0,0,6,0,4],
+    oils:         [8,0,0,9,7,0,0,5,0,0,6,0,4,0,0,0,0,0,0,0,0,0],
     concerns:     ['睡眠品質差','工作壓力大','情緒起伏'],
     preferredCats:['citrus','flower'],
     selectedOils: ['甜橙','佛手柑','依蘭'],
@@ -42,7 +62,6 @@ function doGet(e) {
     } catch(err) {
       Logger.log('doGet save 錯誤：' + err.toString());
     }
-    // 回傳 1×1 透明 GIF（讓圖片像素請求正常結束）
     return ContentService
       .createTextOutput('ok')
       .setMimeType(ContentService.MimeType.TEXT);
@@ -50,7 +69,8 @@ function doGet(e) {
 
   // ② 後台讀取所有資料
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    const ss    = getSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet || sheet.getLastRow() <= 1) {
       return ContentService
         .createTextOutput(JSON.stringify([]))
@@ -72,14 +92,13 @@ function doGet(e) {
   }
 }
 
-// ── POST 請求（保留備用，讀取邏輯相同）───────────────────────
+// ── POST 請求（保留備用）────────────────────────────────────
 function doPost(e) {
   try {
     const rawJson = (e.parameter && e.parameter.data)
                  || (e.postData  && e.postData.contents)
                  || '{}';
     const data = JSON.parse(rawJson);
-    Logger.log('doPost：name=' + data.name + '  email=' + data.email);
     if (data.name) {
       saveRecord(data);
       if (data.email) sendResultEmail(data);
@@ -88,7 +107,6 @@ function doPost(e) {
       .createTextOutput(JSON.stringify({ status: 'ok' }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
-    Logger.log('doPost 錯誤：' + err.toString());
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -97,7 +115,7 @@ function doPost(e) {
 
 // ── 儲存一筆記錄到試算表 ─────────────────────────────────────
 function saveRecord(data) {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const ss    = getSpreadsheet();
   let   sheet = ss.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
@@ -117,7 +135,7 @@ function saveRecord(data) {
   }
 
   const concerns = data.concerns || (data.concern ? [data.concern] : []);
-  const oils     = data.oils     || new Array(13).fill(0);
+  const oils     = data.oils     || new Array(22).fill(0);
 
   sheet.appendRow([
     new Date(data.ts || Date.now()).toLocaleString('zh-TW'),
