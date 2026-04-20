@@ -732,18 +732,32 @@ const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
 
 // ── 精油資料 ─────────────────────────────────────────
 const OILS = [
+  // ── 花香 ──
   { name:'依蘭',       en:'Ylang Ylang',   icon:'🌺', cat:'flower', kw:['感性','自信','放鬆'] },
   { name:'真正薰衣草', en:'True Lavender', icon:'💜', cat:'flower', kw:['深層放鬆','安神','助眠'] },
+  { name:'天竺葵',     en:'Geranium',      icon:'🌸', cat:'flower', kw:['平衡荷爾蒙','情緒穩定','玫瑰感'] },
   { name:'芳香萬壽菊', en:'Tagetes',       icon:'🌼', cat:'flower', kw:['溫暖','舒緩','獨特'] },
+  { name:'快樂鼠尾草', en:'Clary Sage',    icon:'🌿', cat:'flower', kw:['放鬆','平靜','女性能量'] },
+  // ── 柑橘 ──
   { name:'甜橙',       en:'Sweet Orange',  icon:'🍊', cat:'citrus', kw:['開朗','提振情緒','陽光'] },
   { name:'佛手柑',     en:'Bergamot',      icon:'🍋', cat:'citrus', kw:['抗焦慮','平衡','柑橘'] },
+  { name:'檸檬',       en:'Lemon',         icon:'🍋', cat:'citrus', kw:['提神','清晰思考','淨化'] },
   { name:'萊姆',       en:'Lime',          icon:'🟢', cat:'citrus', kw:['清新','提振','活潑'] },
   { name:'桔子',       en:'Mandarin',      icon:'🍊', cat:'citrus', kw:['溫暖','甜美','放鬆'] },
+  { name:'苦橙葉',     en:'Petitgrain',    icon:'🌿', cat:'citrus', kw:['舒緩神經','清新木質','平靜'] },
+  // ── 草本 ──
   { name:'胡椒薄荷',   en:'Peppermint',    icon:'🌱', cat:'herb',   kw:['提神醒腦','清涼','專注'] },
   { name:'迷迭香',     en:'Rosemary',      icon:'🌿', cat:'herb',   kw:['記憶力','活力','清晰'] },
+  { name:'茶樹',       en:'Tea Tree',      icon:'🌿', cat:'herb',   kw:['淨化','抗菌','清新'] },
   { name:'羅勒',       en:'Basil',         icon:'🌿', cat:'herb',   kw:['專注','活化','消除疲勞'] },
+  { name:'甜馬鬱蘭',   en:'Sweet Marjoram',icon:'🌿', cat:'herb',   kw:['溫暖','舒緩肌肉','助眠'] },
+  // ── 木質 ──
   { name:'雪松',       en:'Cedarwood',     icon:'🌲', cat:'wood',   kw:['穩定','接地','深層放鬆'] },
+  { name:'絲柏',       en:'Cypress',       icon:'🌲', cat:'wood',   kw:['淨化空氣','收斂','清新木質'] },
   { name:'廣藿香',     en:'Patchouli',     icon:'🌏', cat:'wood',   kw:['大地感','安全感','感官'] },
+  // ── 清新 ──
+  { name:'澳洲尤加利', en:'Eucalyptus',    icon:'🌬️', cat:'fresh',  kw:['呼吸道','清明','提神'] },
+  { name:'羅文沙葉',   en:'Ravintsara',    icon:'🌿', cat:'fresh',  kw:['免疫','清新','溫和抗菌'] },
   { name:'檸檬香茅',   en:'Lemongrass',    icon:'🌾', cat:'fresh',  kw:['清新','提神','除臭'] },
 ];
 
@@ -775,7 +789,7 @@ const state = {
   concerns: [],
   preferredCats: [],
   selectedOils: [], // indices into OILS that participant chose to rate
-  oils: new Array(13).fill(0),
+  oils: new Array(22).fill(0),
 };
 
 // ── SCENE NAVIGATION ─────────────────────────────────

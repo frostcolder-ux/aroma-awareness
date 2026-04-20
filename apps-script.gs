@@ -5,10 +5,11 @@
 const SHEET_NAME = '覺察表資料';
 
 const OIL_NAMES = [
-  '依蘭','真正薰衣草','芳香萬壽菊',
-  '甜橙','佛手柑','萊姆','桔子',
-  '胡椒薄荷','迷迭香','羅勒',
-  '雪松','廣藿香','檸檬香茅'
+  '依蘭','真正薰衣草','天竺葵','芳香萬壽菊','快樂鼠尾草',
+  '甜橙','佛手柑','檸檬','萊姆','桔子','苦橙葉',
+  '胡椒薄荷','迷迭香','茶樹','羅勒','甜馬鬱蘭',
+  '雪松','絲柏','廣藿香',
+  '澳洲尤加利','羅文沙葉','檸檬香茅'
 ];
 
 // ── 測試函式（編輯器選此函式執行）────────────────────────────
@@ -131,7 +132,7 @@ function saveRecord(data) {
     concerns[0]||'', concerns[1]||'', concerns[2]||'',
     (data.preferredCats||[]).join('、'),
     (data.selectedOils ||[]).join('、'),
-    ...oils.slice(0,13),
+    ...oils.slice(0,22),
     JSON.stringify(data)
   ]);
   Logger.log('saveRecord 完成：' + data.name);
@@ -154,7 +155,13 @@ function sendResultEmail(data) {
       .sort((a,b) => b.s - a.s)
       .slice(0,3);
 
-    const OIL_CATS = ['flower','flower','flower','citrus','citrus','citrus','citrus','herb','herb','herb','wood','wood','fresh'];
+    const OIL_CATS = [
+      'flower','flower','flower','flower','flower',
+      'citrus','citrus','citrus','citrus','citrus','citrus',
+      'herb','herb','herb','herb','herb',
+      'wood','wood','wood',
+      'fresh','fresh','fresh'
+    ];
     const catScore = { flower:0, citrus:0, herb:0, wood:0, fresh:0 };
     oils.forEach((s,i) => { if (s>0 && OIL_CATS[i]) catScore[OIL_CATS[i]] += s; });
     (data.preferredCats||[]).forEach(k => { if (catScore[k]!==undefined) catScore[k]+=5; });
