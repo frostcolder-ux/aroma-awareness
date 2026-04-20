@@ -396,6 +396,83 @@
     }
     .btn-start:hover { background: #6edda0; transform: translateY(-2px); }
 
+    /* ── WELLINA BRAND ─────────────────────────────────────── */
+    .welcome-inner { justify-content: flex-start !important; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Logo area */
+    .wl-brand-header {
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 24px;
+    }
+    .wl-logo-img {
+      max-height: 90px; max-width: 200px; object-fit: contain; margin-bottom: 8px;
+    }
+    /* CSS fallback oval badge */
+    .wl-badge-css {
+      display: flex; flex-direction: column; align-items: center;
+      border: 1.5px solid rgba(255,255,255,.22);
+      border-radius: 50% / 40%; padding: 14px 32px 10px;
+      margin-bottom: 10px; position: relative;
+      background: rgba(255,255,255,.03);
+    }
+    .wl-badge-css::before {
+      content: 'Aromatherapy';
+      position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+      background: var(--dark); padding: 0 8px;
+      font-size: .55rem; letter-spacing: .12em;
+      color: rgba(255,255,255,.4); text-transform: uppercase; white-space: nowrap;
+    }
+    .wl-badge-name {
+      font-family: var(--serif); font-size: 1.85rem; font-weight: 900;
+      color: var(--white); letter-spacing: .04em; line-height: 1;
+    }
+    .wl-badge-sub {
+      font-size: .62rem; color: rgba(255,255,255,.35);
+      letter-spacing: .08em; margin-top: 3px;
+    }
+    /* Tagline */
+    .wl-tagline {
+      font-size: .92rem; font-weight: 700; color: var(--gold);
+      letter-spacing: .06em; margin-bottom: 4px; text-align: center;
+    }
+    .wl-origin {
+      font-size: .65rem; color: rgba(255,255,255,.35);
+      letter-spacing: .08em; margin-bottom: 12px; text-align: center;
+    }
+    /* Spirit pills */
+    .wl-spirits {
+      display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    }
+    .wl-spirit {
+      background: rgba(82,201,137,.1); border: 1px solid rgba(82,201,137,.22);
+      border-radius: 99px; padding: 4px 11px;
+      font-size: .65rem; color: var(--accent); letter-spacing: .04em;
+    }
+    /* Brand story collapse */
+    .wl-story {
+      margin-top: 20px;
+      border: 1px solid rgba(255,255,255,.1); border-radius: 14px; overflow: hidden;
+    }
+    .wl-story > summary {
+      padding: 11px 16px; font-size: .78rem;
+      color: rgba(255,255,255,.4); cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .wl-story > summary::-webkit-details-marker { display: none; }
+    .wl-story[open] > summary .wl-arrow { transform: rotate(180deg); }
+    .wl-arrow { transition: transform .2s; display: inline-block; }
+    .wl-story-body {
+      padding: 0 16px 16px; font-size: .78rem;
+      color: rgba(255,255,255,.45); line-height: 1.95;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .wl-story-body strong { color: rgba(255,255,255,.65); }
+    .wl-story-body em { font-style: italic; color: rgba(255,255,255,.3); }
+    .wl-story-section { margin-top: 12px; }
+    .wl-check { color: var(--accent); }
+
     /* scene-6 stress dynamic text */
     #s6.stress-high { background: linear-gradient(150deg, #ffe8e8 0%, #ffd0d0 100%); }
     #s6.stress-mid  { background: linear-gradient(150deg, #fff5ee 0%, #ffe8d8 100%); }
@@ -429,16 +506,64 @@
     <!-- S0: Welcome -->
     <div class="scene active" id="s0">
       <div class="welcome-inner">
+
+        <!-- ── WELLINA 品牌區 ── -->
+        <div class="wl-brand-header">
+          <!-- Logo 圖片（請將 wellina-logo.png 上傳至專案根目錄以顯示） -->
+          <img class="wl-logo-img" src="wellina-logo.png" alt="WELLINA"
+               onerror="this.style.display='none'">
+          <!-- CSS 備援 Logo -->
+          <div class="wl-badge-css">
+            <div class="wl-badge-name">WELLINÁ</div>
+            <div class="wl-badge-sub">mea ho'ohalahala</div>
+          </div>
+          <div class="wl-tagline">以心為本・由愛出發</div>
+          <div class="wl-origin">源自夏威夷療癒精神</div>
+          <div class="wl-spirits">
+            <span class="wl-spirit">🌱 以心為本</span>
+            <span class="wl-spirit">💚 由愛出發</span>
+            <span class="wl-spirit">🌍 共好共生</span>
+          </div>
+        </div>
+
+        <!-- ── 表單說明 ── -->
         <div class="w-badge"><span class="w-badge-dot"></span>精油香氛覺察體驗</div>
         <h1 class="w-title">探索香氣，<br>讀懂<em>此刻的你</em></h1>
         <p class="w-desc">透過直覺對香氣的反應，加上身心狀態評估，我們將為您解析個人的香氛人格，並提供專屬的精油建議。</p>
         <div class="w-steps">
           <div class="w-step"><div class="w-step-num">1</div><div class="w-step-text">填寫基本背景（約 2 分鐘）</div></div>
           <div class="w-step"><div class="w-step-num">2</div><div class="w-step-text">身心狀態 + 困擾排名</div></div>
-          <div class="w-step"><div class="w-step-num">3</div><div class="w-step-text">香調偏好 + 12支精油評分</div></div>
+          <div class="w-step"><div class="w-step-num">3</div><div class="w-step-text">香調偏好 + 22支精油評分</div></div>
           <div class="w-step"><div class="w-step-num">✦</div><div class="w-step-text">獲得個人化香氛分析報告</div></div>
         </div>
         <button class="btn-start" onclick="goScene(1)">開始體驗 →</button>
+
+        <!-- ── 品牌故事收合區 ── -->
+        <details class="wl-story">
+          <summary>
+            <span>了解 WELLINA 精神</span>
+            <span class="wl-arrow">▾</span>
+          </summary>
+          <div class="wl-story-body">
+            <div class="wl-story-section">
+              <strong>🌱 WELLINA精神</strong><br>
+              <strong>以心為本</strong>｜回到人的本質，重視感受與連結<br>
+              <strong>由愛出發</strong>｜讓每一個行動，都帶著療癒的初衷<br>
+              <strong>共好共生</strong>｜與土地、社會、產業建立永續關係
+            </div>
+            <div class="wl-story-section">
+              <strong>植境與思凡</strong><br>
+              攜手全台社福機構，我們共同實踐：<br>
+              <span class="wl-check">✔</span> 在地種植 × 永續農業<br>
+              <span class="wl-check">✔</span> 療癒應用 × 心理支持<br>
+              <span class="wl-check">✔</span> 就業培力 × 社會共好
+            </div>
+            <div class="wl-story-section">
+              <em>讓香氣，不只是商品，<br>而是一種可以被感受、被傳遞、被延續的「愛的循環」。</em>
+            </div>
+          </div>
+        </details>
+
       </div>
     </div>
 
